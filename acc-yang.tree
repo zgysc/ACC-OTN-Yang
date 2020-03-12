@@ -117,7 +117,7 @@ module: acc-connection
         |        +--rw pbs?          uint64
         +--rw ctp*                   -> /acc-devm:ctps/ctp/name
         +--rw service-type           acc-devm:service-type
-        +--rw pg-id?                 uint16
+        +--rw pg-id*                 uint16
 module: acc-devm
   +--rw me
   |  +--rw name                   string
@@ -352,11 +352,6 @@ module: acc-eos
     |  |  |  +---w uni-ptp-name?          string
     |  |  |  +---w second-uni-ptp-name?   string
     |  |  |  +---w client-vlan-spec
-    |  |  |  |  +---w vlan-id*         uint64
-    |  |  |  |  +---w vlan-priority?   uint64
-    |  |  |  |  +---w access-action?   access-action
-    |  |  |  |  +---w vlan-type?       vlan-type
-    |  |  |  +---w uni-vlan-spec
     |  |  |     +---w vlan-id*         uint64
     |  |  |     +---w vlan-priority?   uint64
     |  |  |     +---w access-action?   access-action
@@ -412,7 +407,7 @@ module: acc-eos
     |     |  |        +--ro pbs?          uint64
     |     |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
     |     |  +--ro service-type           acc-devm:service-type
-    |     |  +--ro pg-id?                 uint16
+    |     |  +--ro pg-id*                 uint16
     |     +--ro create-component
     |        +--ro vc-connection-name*   string
     |        +--ro ftp-name*             string
@@ -452,11 +447,6 @@ module: acc-eth
        |  |  +---w uni-ptp-name?          string
        |  |  +---w second-uni-ptp-name?   string
        |  |  +---w client-vlan-spec
-       |  |  |  +---w vlan-id*         uint64
-       |  |  |  +---w vlan-priority?   uint64
-       |  |  |  +---w access-action?   access-action
-       |  |  |  +---w vlan-type?       vlan-type
-       |  |  +---w uni-vlan-spec
        |  |     +---w vlan-id*         uint64
        |  |     +---w vlan-priority?   uint64
        |  |     +---w access-action?   access-action
@@ -524,7 +514,7 @@ module: acc-eth
           |  |        +--ro pbs?          uint64
           |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
           |  +--ro service-type           acc-devm:service-type
-          |  +--ro pg-id?                 uint16
+          |  +--ro pg-id*                 uint16
           +--ro create-component
              +--ro ftp-name*   string
              +--ro ctp-name*   string
@@ -624,7 +614,7 @@ module: acc-otn
     |        |        +--ro pbs?          uint64
     |        +--ro ctp*                   -> /acc-devm:ctps/ctp/name
     |        +--ro service-type           acc-devm:service-type
-    |        +--ro pg-id?                 uint16
+    |        +--ro pg-id*                 uint16
     +---x modify-odu-connection-capacity
        +---w input
           +---w odu-ctp-name                         string
@@ -811,7 +801,7 @@ module: acc-sdh
           |  |        +--ro pbs?          uint64
           |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
           |  +--ro service-type           acc-devm:service-type
-          |  +--ro pg-id?                 uint16
+          |  +--ro pg-id*                 uint16
           +--ro create-component
              +--ro ftp-name*   string
              +--ro ctp-name*   string

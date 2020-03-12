@@ -145,7 +145,7 @@ module acc-connection {
             mandatory true;
             type acc-devm:service-type;
         }
-        leaf pg-id {
+        leaf-list pg-id {
             type uint16;
             description "pg id";
         }

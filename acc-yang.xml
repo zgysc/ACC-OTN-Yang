@@ -162,7 +162,7 @@
         <!-- type: acc-devm:service-type -->
       </service-type>
       <pg-id>
-        <!-- type: uint16 -->
+        <!-- # entries: 0.. -->
       </pg-id>
     </connection>
   </connections>
