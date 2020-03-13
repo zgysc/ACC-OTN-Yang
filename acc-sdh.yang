@@ -116,7 +116,7 @@ module acc-sdh {
     augment "/acc-devm:ptps/acc-devm:ptp" {
         when "acc-devm:layer-protocol-name = acc-type:SDH";
         container sdh-ptp-pac {
-            leaf sdh-signal-type {
+            leaf current-sdh-signal-type {
                 mandatory true;
                 type acc-enum:signal-type;
             }
@@ -161,6 +161,9 @@ module acc-sdh {
                 min-elements 1;
                 type acc-enum:sdh-switch-type;
                 config false;
+            }
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
             }
             leaf j0-actual-tx {
                 type string {
