@@ -197,7 +197,7 @@ module: acc-devm
   |     |  +--rw acc-sdh:supported-sdh-signal-types*   acc-enum:signal-type
   |     |  +--rw acc-sdh:switch-capability*            acc-enum:sdh-switch-type
   |     +--rw acc-sdh:sdh-ptp-pac
-  |        +--rw acc-sdh:sdh-signal-type               acc-enum:signal-type
+  |        +--rw acc-sdh:current-sdh-signal-type       acc-enum:signal-type
   |        +--ro acc-sdh:supported-sdh-signal-types*   acc-enum:signal-type
   |        +--ro acc-sdh:switch-capability*            acc-enum:sdh-switch-type
   |        +--rw acc-sdh:j0-actual-tx?                 string
@@ -227,11 +227,12 @@ module: acc-devm
   |     |     +--ro acc-eos:rx-number?            uint64
   |     |     +--ro acc-eos:so-handshake-state?   boolean
   |     +--rw acc-sdh:sdh-ftp-pac
-  |        +--rw acc-sdh:sdh-signal-type      acc-enum:signal-type
-  |        +--ro acc-sdh:switch-capability*   acc-enum:sdh-switch-type
-  |        +--rw acc-sdh:j0-actual-tx?        string
-  |        +--rw acc-sdh:j0-expected-rx?      string
-  |        +--ro acc-sdh:j0-actual-rx?        string
+  |        +--rw acc-sdh:sdh-signal-type         acc-enum:signal-type
+  |        +--ro acc-sdh:switch-capability*      acc-enum:sdh-switch-type
+  |        +--rw acc-sdh:service-mapping-mode?   acc-enum:adaptation-type
+  |        +--rw acc-sdh:j0-actual-tx?           string
+  |        +--rw acc-sdh:j0-expected-rx?         string
+  |        +--ro acc-sdh:j0-actual-rx?           string
   +--rw ctps
   |  +--rw ctp* [name]
   |     +--rw name                   string

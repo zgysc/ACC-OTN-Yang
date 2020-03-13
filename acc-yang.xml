@@ -387,9 +387,9 @@
         </switch-capability>
       </sdh-mapping-pac>
       <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
-        <sdh-signal-type>
+        <current-sdh-signal-type>
           <!-- type: acc-enum:signal-type -->
-        </sdh-signal-type>
+        </current-sdh-signal-type>
         <supported-sdh-signal-types>
           <!-- # entries: 0.. -->
         </supported-sdh-signal-types>
@@ -465,6 +465,9 @@
         <switch-capability>
           <!-- # entries: 1.. -->
         </switch-capability>
+        <service-mapping-mode>
+          <!-- type: acc-enum:adaptation-type -->
+        </service-mapping-mode>
         <j0-actual-tx>
           <!-- type: string -->
         </j0-actual-tx>
