@@ -328,7 +328,7 @@ module: acc-devm
     +---n peer-change-notification
        +--ro ptp-name           string
        +--ro peer-ip-address    string
-       +--ro peer-ptp-name      string
+       +--ro peer-ptp-tcp-id    string
 module: acc-eos
 
   rpcs:

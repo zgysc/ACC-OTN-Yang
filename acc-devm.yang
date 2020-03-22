@@ -651,7 +651,7 @@ module acc-devm {
                 length 1..16;
             }
         }
-        leaf peer-ptp-name {
+        leaf peer-ptp-tcp-id {
               mandatory true;
             type string {
                 length 1..64;
