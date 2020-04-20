@@ -363,22 +363,12 @@ module: acc-eos
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
-    |  |  |  +---w ftp-vlan-spec
-    |  |  |     +---w vlan-id*         uint64
-    |  |  |     +---w vlan-priority?   uint64
-    |  |  |     +---w access-action?   access-action
-    |  |  |     +---w vlan-type?       vlan-type
     |  |  +---w secondary-nni
     |  |  |  +---w nni-ptp-name?        string
     |  |  |  +---w nni-ts-detail?       string
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
-    |  |  |  +---w ftp-vlan-spec
-    |  |  |     +---w vlan-id*         uint64
-    |  |  |     +---w vlan-priority?   uint64
-    |  |  |     +---w access-action?   access-action
-    |  |  |     +---w vlan-type?       vlan-type
     |  |  +---w eos-pac
     |  |     +---w sdh-signal-type?           acc-enum:signal-type
     |  |     +---w vc-type                    acc-enum:sdh-switch-type
