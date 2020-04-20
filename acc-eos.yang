@@ -72,18 +72,10 @@ module acc-eos {
             }
             container primary-nni {
                 uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选， accessAction=PUSH_POP";
-                }
                 description "primary nni,必选";
             }
             container secondary-nni {
                 uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选， accessAction=PUSH_POP";
-                }
                 description "业务带保护模式，可选";
             }
            
