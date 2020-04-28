@@ -392,13 +392,11 @@ module acc-otn {
                     "The position.";
             }
             leaf action {
-                mandatory true;
                 type modify-action;
                 description
                     "The Action of the modification.";
             }
             leaf current-number-of-tributary-slots {
-                mandatory true;
                 type uint64;
             }
             leaf ts-detail {

@@ -610,8 +610,8 @@ module: acc-otn
        +---w input
           +---w odu-ctp-name                         string
           +---w position                             odu-position
-          +---w action                               modify-action
-          +---w current-number-of-tributary-slots    uint64
+          +---w action?                              modify-action
+          +---w current-number-of-tributary-slots?   uint64
           +---w ts-detail?                           string
           +---w timeout                              uint64
 
