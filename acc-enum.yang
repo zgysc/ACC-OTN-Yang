@@ -115,6 +115,16 @@ module acc-enum {
         }
     }
 
+    typedef osu-switch-type {
+        type enumeration {
+            enum OSU {
+                value 0;
+                description "OSU";
+            }
+        }
+    }
+
+
     typedef adaptation-type {
         type enumeration {
             enum CBR_AMP {
