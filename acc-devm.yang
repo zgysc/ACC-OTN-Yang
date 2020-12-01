@@ -92,6 +92,9 @@ module acc-devm {
             enum EVPL {
                 value 3;
             }
+	     enum OSU {
+                value 4;
+            }
         }
     }
     typedef me-status {
