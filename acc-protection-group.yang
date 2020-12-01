@@ -10,25 +10,34 @@ module acc-protection-group {
     typedef protection-type {
         type enumeration {
             enum odu-sncp-i { 
-				value 0;
-			}
+		value 0;
+	    }
             enum odu-sncp-s { 
                 value 1;
             }
-			enum vc-sncp { 
-				value 2;
-			}
-			enum och-1-plus-1 { 
-				value 3;
-			}
-			enum msp-1-plus-1 {
-				value 4; 
-			}
+	    enum vc-sncp { 
+		value 2;
+	    }
+	    enum och-1-plus-1 { 
+		value 3;
+	    }
+	    enum msp-1-plus-1 {
+		value 4; 
+	    }
             enum lag {
                 value 5; 
             }
             enum no-protection {
                 value 6; 
+            }
+	    enum osu-sncp-i { 
+		value 7;
+	    }
+	    enum osu-sncp-n { 
+		value 8;
+	    }
+            enum osu-sncp-s { 
+                value 9;
             }
         }
     }
