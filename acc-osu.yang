@@ -1,0 +1,335 @@
+module acc-osu {
+    yang-version 1.1;
+    namespace "urn:ccsa:yang:acc-osu";
+    prefix acc-osu;
+    import ietf-yang-types {
+        prefix yang;
+    }
+    import acc-yang-types {
+         prefix acc-type; 
+    }
+    
+    import acc-devm {
+        prefix acc-devm;
+    }
+    
+    import acc-connection {
+        prefix acc-con;
+    }
+
+    import acc-otn {
+        prefix acc-otn;
+    }
+
+    import acc-enum {
+        prefix acc-enum;
+    }
+
+    import acc-protection-group {
+        prefix acc-pg;
+    }
+
+    revision 2020-12-02 {
+        description "init v1.0";
+    }
+
+    /*
+   * common types
+   */
+    identity OSU {
+        base acc-type:layer-protocol-name;
+    }
+   
+	typedef tcm-mode-type {
+        type enumeration {
+            enum operational{
+                value 0;
+                description "enable TCM";
+            }
+            enum monitor {
+                value 1;
+                description "monitor TCM";
+            }
+            enum transparent{
+                value 2;
+                description "disable TCM";
+            }
+        }
+    }
+
+    /*
+   * groupings
+   */
+    
+
+    augment "/acc-devm:ptps/acc-devm:ptp" {
+        when "acc-devm:layer-protocol-name = 'OSU'";
+        container osu-ptp-pac {
+			leaf-list osu-signal-type {
+				mandatory true;
+				config false;
+				min-elements 1;
+				type acc-enum:signal-type;
+			}
+			leaf-list adaptation-type {
+				config false;
+				type acc-enum:adaptation-type;
+			}
+        }
+    }
+
+    augment "/acc-devm:ftps/acc-devm:ftp" {
+        when "acc-devm:layer-protocol-name = 'OSU'";
+        container osu-ftp-pac {
+            leaf available-tpn-number {
+                    mandatory true;
+                    type uint64;
+					description "可用TPN 0~1000";
+			}
+			leaf total-band-width {
+				mandatory true;
+				type uint64;
+				description "所支持的OSU基准带宽单元(10.4Mbps)数量，与对应ODU类型相关";
+			}
+			leaf available-band-width {
+				mandatory true;
+				type uint64;
+				description "当前可用OSU基准带宽单元(10.4Mbps)数量";
+			}
+        }
+    }
+
+    augment "/acc-devm:ctps/acc-devm:ctp" {
+        when "acc-devm:layer-protocol-name = 'OSU'";
+        container osu-ctp-pac {
+            container osu-signal-type {
+				mandatory true;
+                type acc-enum:signal-type;
+                description "";
+            }
+            container adaptation-type {
+                type acc-enum:adaptation-type;
+                description "";
+            }
+			leaf tpn {
+				mandatory true;
+				type uint64;
+				description "TPN的编号0～1000"
+			}
+			leaf bandwidth {
+				config false;
+				type uint64;
+				description "CTP占用的OSU基准单元的数量"
+			}
+			leaf pm-trail-trace-actual-tx {
+				type string;
+			}
+			leaf pm-trail-trace-actual-rx {
+				type string;
+			}
+			leaf pm-trail-trace-expected-tx {
+				type string;
+			}
+			leaf tcm1-mode {
+				type tcm-mode-type;
+			}
+			leaf tcm2-mode {
+				type tcm-mode-type;
+			}
+        }
+    }
+
+    rpc osu-two-way-dm {
+        input {
+            leaf ctp-name {
+                type string;
+            }
+            leaf dm-type {
+                type string;
+                description "PM or TCM1";
+            }
+        }
+        output {
+            leaf osu-delay {
+                type uint64;
+            }
+        }
+    }
+
+
+
+    rpc create-eo-osu-connection{
+        input {uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default lag";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                }
+				leaf client-signal-type {
+					type acc-enum:signal-type;
+				}
+            }
+
+            container primary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+                }
+                description "primary nni,必选";
+            }
+            container secondary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+                }
+                description "ETH带保护模式，可选";
+            }
+            container primary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI不带保护，可选";
+            }
+            container secondary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI带保护，可选";
+            }
+        }
+        output {
+            container connection {
+                uses acc-con:connection;
+            }
+            container create-component {
+                leaf-list ftp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf-list ctp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+            }
+        }
+    }
+
+    rpc create-osu-connection {
+        input {
+            uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default lag";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                }
+				leaf client-signal-type {
+					type acc-enum:signal-type;
+				}
+            }
+
+            container primary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+                }
+                description "primary nni,必选";
+            }
+            container secondary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+                }
+                description "ETH带保护模式，可选";
+            }
+            container primary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI不带保护，可选";
+            }
+            container secondary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI带保护，可选";
+            }
+        }
+        output {
+            container connection {
+                uses acc-con:connection;
+            }
+            container create-component {
+                leaf-list ftp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf-list ctp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }                
+            }
+        }
+    }
+
+    rpc modify-osu-connection-capacity {
+        input {
+            leaf ctp-name {
+                type string;
+            }
+            uses acc-connection:capacity;
+            leaf timer {
+                type uint64;
+                description "default 60   range:1~1023";
+            }
+            leaf action {
+                type acc-otn:modify-action;
+            }
+        }
+    }
+}
