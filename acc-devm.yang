@@ -146,15 +146,19 @@ module acc-devm {
         type enumeration {
             enum otm-box {
                 value 0;
+		description "此类型仅保留，不会被采用了";
             }
             enum po-box {
                 value 1;
+		description "po名字虽然为分组增强型，但意义为广义的，后续也包括支持OSU等能力的设备";
             }
             enum otm-pnp {
                 value 2;
+		description "此类型仅保留，不会被采用了";
             }
             enum po-pnp {
                 value 3;
+		description "po名字虽然为分组增强型，但意义为广义的，后续也包括支持OSU等能力的设备";
             }
         }
     }
@@ -204,9 +208,9 @@ module acc-devm {
 		enum system-control {
 			value 3;
 		}
-        enum cross-connect {
-            value 4;
-        }
+        	enum cross-connect {
+            		value 4;
+        	}
 		enum clock {
 			value 5;
 		}
@@ -335,7 +339,7 @@ module acc-devm {
 	        mandatory true;
             type string;
             config false;
-            description "Universal unique identifier, MAC address is suggested. for UMS,it's real name";
+            description "真正设备唯一标识，无论断电重启等任何条件都始终保证不变，建议以管理口mac地址或者串号作为标识";
         }
         leaf status {
             mandatory true;
