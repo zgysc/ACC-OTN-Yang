@@ -40,7 +40,7 @@ module acc-osu {
         base acc-type:layer-protocol-name;
     }
    
-	typedef tcm-mode-type {
+    typedef tcm-mode-type {
         type enumeration {
             enum operational{
                 value 0;
@@ -65,16 +65,16 @@ module acc-osu {
     augment "/acc-devm:ptps/acc-devm:ptp" {
         when "acc-devm:layer-protocol-name = 'OSU'";
         container osu-ptp-pac {
-			leaf-list osu-signal-type {
-				mandatory true;
-				config false;
-				min-elements 1;
-				type acc-enum:signal-type;
-			}
-			leaf-list adaptation-type {
-				config false;
-				type acc-enum:adaptation-type;
-			}
+		leaf-list osu-signal-type {
+			mandatory true;
+			config false;
+			min-elements 1;
+			type acc-enum:signal-type;
+		}
+		leaf-list adaptation-type {
+			config false;
+			type acc-enum:adaptation-type;
+		}
         }
     }
 
@@ -84,18 +84,18 @@ module acc-osu {
             leaf available-tpn-number {
                     mandatory true;
                     type uint64;
-					description "可用TPN 0~1000";
-			}
-			leaf total-band-width {
-				mandatory true;
-				type uint64;
-				description "所支持的OSU基准带宽单元(10.4Mbps)数量，与对应ODU类型相关";
-			}
-			leaf available-band-width {
-				mandatory true;
-				type uint64;
-				description "当前可用OSU基准带宽单元(10.4Mbps)数量";
-			}
+		    description "可用TPN 0~1000";
+		}
+		leaf total-band-width {
+			mandatory true;
+			type uint64;
+			description "所支持的OSU基准带宽单元(10.4Mbps)数量，与对应ODU类型相关";
+		}
+		leaf available-band-width {
+			mandatory true;
+			type uint64;
+			description "当前可用OSU基准带宽单元(10.4Mbps)数量";
+		}
         }
     }
 
@@ -103,7 +103,7 @@ module acc-osu {
         when "acc-devm:layer-protocol-name = 'OSU'";
         container osu-ctp-pac {
             container osu-signal-type {
-				mandatory true;
+		mandatory true;
                 type acc-enum:signal-type;
                 description "";
             }
@@ -111,46 +111,49 @@ module acc-osu {
                 type acc-enum:adaptation-type;
                 description "";
             }
-			leaf tpn {
-				mandatory true;
-				type uint64;
-				description "TPN的编号0～1000"
-			}
-			leaf bandwidth {
-				config false;
-				type uint64;
-				description "CTP占用的OSU基准单元的数量"
-			}
-			leaf pm-trail-trace-actual-tx {
-				type string;
-			}
-			leaf pm-trail-trace-actual-rx {
-				type string;
-			}
-			leaf pm-trail-trace-expected-tx {
-				type string;
-			}
-			leaf tcm1-mode {
-				type tcm-mode-type;
-			}
-			leaf tcm2-mode {
-				type tcm-mode-type;
-			}
+		leaf tpn {
+			mandatory true;
+			type uint64;
+			description "TPN的编号0～1000"
+		}
+		leaf bandwidth {
+			config false;
+			type uint64;
+			description "CTP占用的OSU基准单元的数量"
+		}
+		leaf pm-trail-trace-actual-tx {
+			type string;
+		}
+		leaf pm-trail-trace-actual-rx {
+			type string;
+		}
+		leaf pm-trail-trace-expected-tx {
+			type string;
+		}
+		leaf tcm1-mode {
+			type tcm-mode-type;
+		}
+		leaf tcm2-mode {
+			type tcm-mode-type;
+		}
         }
     }
 
     rpc osu-two-way-dm {
         input {
             leaf ctp-name {
+	    	mandatory true;
                 type string;
             }
             leaf dm-type {
+	    	mandatory true;
                 type string;
                 description "PM or TCM1";
             }
         }
         output {
             leaf osu-delay {
+	    	mandatory true;
                 type uint64;
             }
         }
@@ -260,9 +263,9 @@ module acc-osu {
                 leaf second-uni-ptp-name {
                     type string;
                 }
-				leaf client-signal-type {
-					type acc-enum:signal-type;
-				}
+		leaf client-signal-type {
+			type acc-enum:signal-type;
+		}
             }
 
             container primary-nni {
@@ -279,7 +282,7 @@ module acc-osu {
                     uses acc-con:vlan-spec;
                     description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
                 }
-                description "ETH带保护模式，可选";
+                description "带保护模式，可选";
             }
             container primary-nni2 {
                 uses acc-otn:nni;
@@ -320,14 +323,17 @@ module acc-osu {
     rpc modify-osu-connection-capacity {
         input {
             leaf ctp-name {
+	    	mandatory true;
                 type string;
             }
             uses acc-connection:capacity;
             leaf timer {
+	    	mandatory true;
                 type uint64;
                 description "default 60   range:1~1023";
             }
             leaf action {
+	    	mandatory true;
                 type acc-otn:modify-action;
             }
         }
