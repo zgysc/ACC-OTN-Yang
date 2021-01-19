@@ -318,4 +318,156 @@ module acc-sdh {
             }
         }
     }
+    
+    rpc get-sdh-connection-detail {
+        input {
+            leaf name {
+                type string;
+                description "正常管控下发的connection,不支持查询动态衍生出的connection"
+            }
+
+        }
+        output {
+            uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default msp-1-plus-1";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container sdh-uni {
+                leaf uni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type acc-enum:sdh-switch-type;
+                }
+                leaf mapping-path {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for UNI-NNI ";
+            }
+            container second-sdh-uni {
+                leaf uni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type acc-enum:sdh-switch-type;
+                }
+                leaf mapping-path {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for UNI-NNI ";
+            }
+            
+            container primary-nni {
+                uses acc-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "primary nni, mandatory true";
+            }
+            container secondary-nni {
+                uses acc-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only for service with protection. Optional";
+            }
+            container primary-nni2 {
+                uses acc-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only NNI2NNI mode, optional!";
+            }
+            container secondary-nni2 {
+                uses acc-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only NNI2NNI mode and with protection. optional";
+            }
+            
+        container create-component {
+           leaf sdh-ptp-ctp {
+            type string;
+            description "客户侧 PTP 的子 CTP";
+          }
+
+          leaf ul-sdh-ftp {
+            type string;
+            description "上联 主用 SDH FTP";
+          }
+
+          leaf ul-sdh-ftp-ctp {
+            type string;
+            description "上联 主用 SDH FTP的CTP";
+          }
+
+          leaf ul-sdh-ftp-p {
+            type string;
+            description "上联 保护 SDH FTP";
+          }
+
+          leaf ul-sdh-ftp-ctp-p {
+            type string;
+            description "上联 保护 SDH FTP的CTP，仅UNI-NNI带SNCP保护";
+          }
+
+          leaf dl-sdh-ftp {
+            type string;
+            description "下联 主用 SDH FTP ， 仅NNI-NNI";
+          }
+
+          leaf dl-sdh-ftp-ctp {
+            type string;
+            description "下联 主用 SDH FTP的CTP，仅 NNI-NNI";
+          }
+
+          leaf dl-sdh-ftp-p {
+            type string;
+            description "下联 保护 SDH FTP， 仅NNI-NNI";
+          }
+
+          leaf ul-sdh-ftp-ctp-p {
+            type string;
+            description "下联 保护 SDH FTP的CTP，仅UNI-NNI带SNCP保护";
+          }
+
+          leaf ul-odu-ctp {
+            type string;
+            description "上联 主用 ODU CTP";
+          }
+          leaf ul-odu-ctp-p {
+            type string;
+            description "上联 保护口的 ODU CTP（有保护则上报）";
+          }
+          leaf dl-odu-ctp {
+            type string;
+            description "下联 主用 ODU CTP（only NNI-NNI）";
+          }
+          leaf dl-odu-ctp-p {
+            type string;
+            description "下联 保护口的 ODU CTP（only NNI-NNI，有保护则上报）";
+          }                    
+        }
+        
+    }
+}
 }
