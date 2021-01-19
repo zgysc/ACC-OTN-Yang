@@ -414,5 +414,63 @@ module acc-otn {
         }
     }
 
+    rpc get-odu-connection-detail {
+        input {
+            leaf name {
+                type string;
+                description "正常管控下发的connection,不支持查询动态衍生出的connection"
+            }
+
+        }
+        output {
+            uses acc-con:create-connection;
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container client-side-nni {
+                uses nni;
+                description "client side nni, only for UNI-NNI";
+            }
+            container primary-nni {
+                uses nni;
+                description "primary nni, mandatory true";
+            }
+            container secondary-nni {
+                uses nni;
+                description "only for service with protection. Optional";
+            }
+            container primary-nni2 {
+                uses nni;
+                description "only NNI2NNI mode, optional!";
+            }
+            container secondary-nni2 {
+                uses nni;
+                description "only NNI2NNI mode and with protection. optional";
+            }  
+            
+        container create-component {
+          leaf ul-odu-ctp {
+            type string;
+            description "上联 主用 ODU CTP";
+          }
+          leaf ul-odu-ctp-p {
+            type string;
+            description "上联 保护口的 ODU CTP（有保护则上报）";
+          }
+          leaf dl-odu-ctp {
+            type string;
+            description "下联 主用 ODU CTP（only NNI-NNI）";
+          }
+          leaf dl-odu-ctp-p {
+            type string;
+            description "下联 保护口的 ODU CTP（only NNI-NNI，有保护则上报）";
+          }                    
+        }
+        
+    }
+ }
     
 }
