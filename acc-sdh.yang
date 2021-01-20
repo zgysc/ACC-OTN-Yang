@@ -323,7 +323,7 @@ module acc-sdh {
         input {
             leaf name {
                 type string;
-                description "正常管控下发的connection,不支持查询动态衍生出的connection"
+                description "正常管控下发的connection,不支持查询动态衍生出的connection";
             }
 
         }
@@ -427,7 +427,7 @@ module acc-sdh {
 
           leaf ul-sdh-ftp-ctp-p {
             type string;
-            description "上联 保护 SDH FTP的CTP，仅UNI-NNI带SNCP保护";
+            description "上联 保护 SDH FTP的CTP，仅UNI-NNI带保护";
           }
 
           leaf dl-sdh-ftp {
@@ -445,9 +445,9 @@ module acc-sdh {
             description "下联 保护 SDH FTP， 仅NNI-NNI";
           }
 
-          leaf ul-sdh-ftp-ctp-p {
+          leaf dl-sdh-ftp-ctp-p {
             type string;
-            description "下联 保护 SDH FTP的CTP，仅UNI-NNI带SNCP保护";
+            description "下联 保护 SDH FTP的CTP，仅UNI-NNI带保护";
           }
 
           leaf ul-odu-ctp {
