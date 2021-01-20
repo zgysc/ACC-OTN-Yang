@@ -418,7 +418,7 @@ module acc-otn {
         input {
             leaf name {
                 type string;
-                description "正常管控下发的connection,不支持查询动态衍生出的connection"
+                description "正常管控下发的connection,不支持查询动态衍生出的connection";
             }
 
         }
