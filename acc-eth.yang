@@ -478,7 +478,7 @@ module acc-eth {
             }
             leaf nni2-protection-type {
                 type acc-pg:protection-type;
-                description "only for NNI-NNI"
+                description "only for NNI-NNI";
             }
             container eth-uni {
                 leaf uni-ptp-name {
