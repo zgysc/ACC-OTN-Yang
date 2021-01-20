@@ -459,7 +459,7 @@ module acc-eth {
         input {
             leaf name {
                 type string;
-                description "正常管控下发的connection,不支持查询动态衍生出的connection"
+                description "正常管控下发的connection,不支持查询动态衍生出的connection";
             }
 
         }
@@ -526,8 +526,7 @@ module acc-eth {
                 }
                 description "only for NNI-NNI带保护";
             }
-        }
-            
+   
 		container create-component {
 		  leaf eth-ptp-ctp {
 		    type string;
@@ -540,6 +539,14 @@ module acc-eth {
 		  leaf ul-eth-ftp-ctp {
 		    type string;
 		    description "上联 ETH FTP的 子CTP";
+		  }
+		  leaf dl-eth-ftp {
+		    type string;
+		    description "下联 ETH FTP, only NNI-NNI";
+		  }
+		  leaf dl-eth-ftp-ctp {
+		    type string;
+		    description "下联 ETH FTP的 子CTP, only NNI-NNI";
 		  }
 		  leaf ul-odu-ctp {
 		    type string;
