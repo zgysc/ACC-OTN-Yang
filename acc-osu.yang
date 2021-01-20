@@ -66,7 +66,6 @@ module acc-osu {
         when "acc-devm:layer-protocol-name = 'OSU'";
         container osu-ptp-pac {
 		leaf-list osu-signal-type {
-			mandatory true;
 			config false;
 			min-elements 1;
 			type acc-enum:signal-type;
@@ -102,24 +101,23 @@ module acc-osu {
     augment "/acc-devm:ctps/acc-devm:ctp" {
         when "acc-devm:layer-protocol-name = 'OSU'";
         container osu-ctp-pac {
-            container osu-signal-type {
-		mandatory true;
+            leaf osu-signal-type {
                 type acc-enum:signal-type;
                 description "";
             }
-            container adaptation-type {
+            leaf adaptation-type {
                 type acc-enum:adaptation-type;
                 description "";
             }
 		leaf tpn {
 			mandatory true;
 			type uint64;
-			description "TPN的编号0～1000"
+			description "TPN的编号0～1000";
 		}
 		leaf bandwidth {
 			config false;
 			type uint64;
-			description "CTP占用的OSU基准单元的数量"
+			description "CTP占用的OSU基准单元的数量";
 		}
 		leaf pm-trail-trace-actual-tx {
 			type string;
@@ -326,7 +324,7 @@ module acc-osu {
 	    	mandatory true;
                 type string;
             }
-            uses acc-connection:capacity;
+            uses acc-con:capacity;
             leaf timer {
 	    	mandatory true;
                 type uint64;
