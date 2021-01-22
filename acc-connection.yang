@@ -85,23 +85,23 @@ module acc-connection {
     * groupings
     */
     grouping capacity {
-        choice for-odu-or-eth {
-            case for-odu-or-sdh {
+        choice cir-or-totalsize {
+            case for-odusdhosu {
                 leaf total-size {
                     mandatory true;
                     type uint64;
-                    description "total size, When ODU,SDH,  mandatory must to be true and others must not exists";
+                    description "total size, When ODU,SDH,OSU  mandatory must to be true and others must not exists";
                 }
             }
             case for-eth-or-eos {
                 leaf cir {
                     mandatory true;
                     type uint64;
-                    description "Important , When ETH,EOS   mandatory must to be true and total-size must not exists";
+                    description "Important , When ETH,EOS,EOOSU   mandatory must to be true and total-size must not exists";
                 }
                 leaf pir {
                     type uint64;
-                    description "Important , When ETH,EOS   mandatory must to be true and total-size must not exists";
+                    description "Important , When ETH,EOS,EOOSU   mandatory must to be true and total-size must not exists";
                 }
                 leaf cbs {
                     type uint64;
@@ -140,6 +140,7 @@ module acc-connection {
                 path '/acc-devm:ctps/acc-devm:ctp/acc-devm:name';
             }
             min-elements 2;
+            description "只返回与当前业务下发时layerProtocolName相同协议层的CTP";
         }
         leaf service-type {
             mandatory true;
