@@ -26,7 +26,6 @@ module acc-eos {
     import acc-protection-group {
         prefix acc-pg;
     }
-    
 
     revision 2019-02-13 {
         description
@@ -42,6 +41,22 @@ module acc-eos {
             description "Virtual concatenation group";
         }
     }
+    
+    grouping vc-cascade {
+        leaf eth-ftp-vc-ctp {
+            type string;
+            description "第n个VC时隙";
+        }
+        leaf sdh-ftp-ctp {
+            type string;
+            description "第n个对应的SDH CTP";
+        }
+        leaf sdh-ftp-ctp-p {
+            type string;
+            description "第n个对应的SDH保护CTP";
+        }
+    }
+    
     rpc create-eos-connection {
         input {
             uses acc-con:create-connection;
@@ -128,7 +143,7 @@ module acc-eos {
             container create-component {
                 leaf-list vc-connection-name {
                     type string;
-					min-elements 0;
+                    min-elements 0;
                 }
                 leaf-list ftp-name {
                     type string {
@@ -195,4 +210,50 @@ module acc-eos {
             }
         }
     }
+    
+    rpc get-eos-connection-detail {
+        input {
+            leaf name {
+                type string;
+                description "正常管控下发的connection，不支持查询动态衍生出的connec";
+            }
+        }
+        output {
+            container create-component {
+                leaf eth-ptp-ctp {
+                    type string;
+                    description "客户侧 PTP 的子 CTP";
+                }
+				leaf eth-ftp-ctp {
+                    type string;
+                    description "ETH FTP 的子 CTP";
+                }
+				leaf eth-ftp {
+                    type string;
+                    description "ETH FTP";
+                }
+				leaf sdh-ftp {
+                    type string;
+                    description "SDH FTP";
+                }
+				leaf sdh-ftp-p {
+                    type string;
+                    description "SDH FTP 保护口";
+                }
+				leaf ul-odu-ctp {
+                    type string;
+                    description "上联 PTP 主口的子 ODU CTP";
+                }
+                leaf ul-odu-ctp-p {
+                    type string;
+                    description "上联 PTP 保护口的子 ODU CTP,有保护则上报";
+                }
+                list vc-cascade {
+                    min-elements 1;
+                    uses vc-cascade;
+                    description "多个eth-ftp-ctp对应多个vc时隙";
+                }
+            }
+        }
+    }               
 }
