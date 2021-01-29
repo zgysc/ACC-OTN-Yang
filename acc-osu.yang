@@ -317,7 +317,240 @@ module acc-osu {
             }
         }
     }
+	
+	rpc get-osu-connection-detail {
+	    input {
+		    leaf name {
+                type string;
+                description "正常管控下发的connection,不支持查询动态衍生出的connection";
+            }
+		}
+	    output {
+		    uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default lag";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                }
+				leaf client-signal-type {
+					type acc-enum:signal-type;
+				}
+            }
 
+            container primary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+                }
+                description "primary nni,必选";
+            }
+            container secondary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+                }
+                description "ETH带保护模式，可选";
+            }
+            container primary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI不带保护，可选";
+            }
+            container secondary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI带保护，可选";
+            }
+			container create-component {
+			    leaf osu-ptp-ctp {
+				    type string;
+					description "客户侧 PTP的子CTP（only UNI-NNI）";
+				}
+				leaf ul-osu-ftp-ctp {
+				    type string;
+					description "上联 OSU FTP的子CTP";
+				}
+				leaf ul-osu-ftp-ctp-p {
+				    type string;
+					description "上联 保护口的OSU FTP的子CTP（only SNCP-1-plus-1）";
+				}
+				leaf ul-osu-ftp {
+				    type string;
+					description "上联 主用 OSU FTP";
+				}
+				leaf ul-osu-ftp-p {
+				    type string;
+					description "上联 保护口的OSU FTP（only SNCP-1-plus-1）";
+				}
+				leaf ul-odu-ctp {
+				    type string;
+					description "上联 主用 ODU CTP";
+				}
+				leaf ul-odu-ctp-p {
+				    type string;
+					description "上联 保护口的 ODU CTP（有保护则上报）";
+				}
+				leaf dl-osu-ftp {
+				    type string;
+					description "下联 主用 OSU FTP（only NNI-NNI）";
+				}
+				leaf dl-osu-ftp-p {
+				    type string;
+					description "下联 保护口的 OSU FTP（only NNI-NNI，SNCP-1-plus-1）";
+				}
+				leaf dl-odu-ctp {
+				    type string;
+					description "下联 主用 ODU CTP（only NNI-NNI）";
+				}
+				leaf dl-odu-ctp-p {
+				    type string;
+					description "下联 保护口的 ODU CTP（only NNI-NNI）";
+				}
+				leaf dl-osu-ftp-ctp {
+				    type string;
+					description "下联 主用 OSU FTP的CTP（only NNI-NNI）";
+				}
+				leaf dl-osu-ftp-ctp-p {
+				    type string;
+					description "下联 保护口 OSU FTP的CTP（only NNI-NNI）";
+				}
+			}	
+		}
+	}
+	
+	rpc get-eo-osu-connection-detail {
+	    input {
+		    leaf name {
+                type string;
+                description "正常管控下发的connection,不支持查询动态衍生出的connection";
+            }
+        }
+		output {
+		    uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default lag";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            leaf nni2-protection-type {
+                type acc-pg:protection-type;
+            }
+            container uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                }
+				leaf client-signal-type {
+					type acc-enum:signal-type;
+				}
+            }
+            container primary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+                }
+                description "primary nni,必选";
+            }
+            container secondary-nni {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+                }
+                description "ETH带保护模式，可选";
+            }
+            container primary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI不带保护，可选";
+            }
+            container secondary-nni2 {
+                uses acc-otn:nni;
+                container ftp-vlan-spec {
+                    uses acc-con:vlan-spec;
+                    description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                }
+                description "NNI-NNI带保护，可选";
+            }
+		    container create-component {
+			    leaf eth-ptp-ctp {
+				    type string;
+					description "客户侧 PTP的CTP";
+				}
+				leaf eth-ftp-ctp {
+				    type string;
+					description "客户侧 FTP的CTP";
+				}
+				leaf eth-ftp {
+				    type string;
+					description "客户侧 FTP";
+				}
+			    leaf eth-ptp-osu-ctp {
+				    type string;
+					description "ETH FTP的CTP";
+				}
+				leaf osu-ftp-ctp {
+				    type string;
+					description "OSU FTP的CTP";
+				}
+			    leaf osu-ftp-ctp-p {
+				    type string;
+					description "OSU FTP的CTP（only OSU-SNCP-1-plus-1）";
+				}
+			    leaf osu-ftp {
+				    type string;
+					description "主用 OSU FTP";
+				}
+				leaf osu-ftp-p {
+				    type string;
+					description "保护口 OSU FTP（only OSU-SNCP-1-plus-1）";
+				}
+			    leaf ul-odu-ctp {
+				    type string;
+					description "上联 主用 ODU CTP";
+				}
+				leaf ul-odu-ctp-p {
+				    type string;
+					description "上联 保护口 ODU CTP";
+				}	
+			}
+		}
+	}
+	
     rpc modify-osu-connection-capacity {
         input {
             leaf ctp-name {
