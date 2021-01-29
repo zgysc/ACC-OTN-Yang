@@ -26,7 +26,6 @@ module acc-eos {
     import acc-protection-group {
         prefix acc-pg;
     }
-    
 
     revision 2019-02-13 {
         description
@@ -42,6 +41,22 @@ module acc-eos {
             description "Virtual concatenation group";
         }
     }
+    
+    grouping eth-ftp-ctp {
+        leaf eth-ftp-ctp {
+            type string;
+            description "ETH FTP的 子CTP";
+        }
+        leaf ul-sdh-ftp-ctp {
+            type string;
+            description "上联 主用 SDH FTP的CTP";
+        }
+        leaf ul-sdh-ftp-ctp-p {
+            type string;
+            description "上联 保护 SDH FTP的CTP";
+        }
+    }
+    
     rpc create-eos-connection {
         input {
             uses acc-con:create-connection;
@@ -128,7 +143,7 @@ module acc-eos {
             container create-component {
                 leaf-list vc-connection-name {
                     type string;
-					min-elements 0;
+                    min-elements 0;
                 }
                 leaf-list ftp-name {
                     type string {
@@ -195,4 +210,129 @@ module acc-eos {
             }
         }
     }
+    
+    rpc get-eos-connection-detail {
+        input {
+            leaf name {
+                type string;
+                description "正常管控下发的connection，不支持查询动态衍生出的connec";
+            }
+        }
+        output {
+            uses acc-con:create-connection;
+            leaf service-mapping-mode {
+                type acc-enum:adaptation-type;
+                description "基于SDH FTP客户信号类型，STM-1/STM-4=GMP，STM-16/STM-64=CBR_BMP";
+            }
+            leaf uni-protection-type {
+                type acc-pg:protection-type;
+                description "default lag";
+            }
+            leaf nni-protection-type {
+                type acc-pg:protection-type;
+            }
+            container eth-uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                    description "可选，用于与客户设备之间建立LAG保护（非负载均衡，单端保护）";
+                }       
+                container client-vlan-spec {
+                    when "../../service-type = 'EVPL'";
+                        uses acc-con:vlan-spec;
+                        description "只适用于EVPL，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
+                }
+            }
+                      
+            container primary-nni {
+                uses acc-otn:nni;
+                description "primary nni, 必选";
+            }
+           
+            container secondary-nni {
+                uses acc-otn:nni;
+                description "业务带保护模式，可选";
+            }
+            
+            container eos-pac {
+                leaf sdh-signal-type {
+                    type acc-enum:signal-type;
+                }
+                leaf vc-type {
+                    mandatory true;
+                    type acc-enum:sdh-switch-type;
+                }
+                leaf-list mapping-path {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf sdh-signal-type-protect {
+                    type acc-enum:signal-type;
+                }
+                leaf-list mapping-path-protect {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf lcas {
+                    type boolean;
+                    default false;
+                }
+                leaf hold-off {
+                    type uint32;
+                    default 0;
+                    description "unit: ms";
+                }
+                leaf wtr {
+                    type uint32;
+                    default 300;
+                    description "unit: s";
+                }
+                leaf tsd {
+                    type boolean;
+                    default false;
+                }
+            }
+            
+            container create-component {
+                leaf eth-ptp-ctp {
+                    type string;
+                    description "客户侧 PTP 的子 CTP";
+                }
+                leaf ul-eth-ftp {
+                    type string;
+                    description "上联 ETH FTP";
+                }
+                leaf ul-eth-ftp-ctp {
+                    type string;
+                    description "上联 ETH FTP的 子CTP";
+                }
+                leaf ul-sdh-ftp {
+                    type string;
+                    description "上联 主用 SDH FTP";
+                }
+                leaf ul-sdh-ftp-p {
+                    type string;
+                    description "上联 保护 SDH FTP";
+                }
+                leaf ul-odu-ctp {
+                    type string;
+                    description "上联 主用 ODU CTP";
+                }
+                leaf ul-odu-ctp-p {
+                    type string;
+                    description "上联 保护口的 ODU CTP（有保护则上报）";
+                }
+                list eth-ftp-ctps {
+                    min-elements 1;
+                    uses eth-ftp-ctp;
+                    description "多个eth-ftp-ctp对应多个vc时隙";
+                }
+            }
+        }
+    }               
 }
