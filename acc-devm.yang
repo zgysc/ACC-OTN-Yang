@@ -243,7 +243,7 @@ module acc-devm {
         }
 	leaf eq {
 	    type string;
-	    description "parent EQ, Does each FTP has parent EQ?????"
+	    description "parent EQ, Does each FTP has parent EQ?????";
 	}
         container state-pac {
             uses state-pac;
@@ -502,7 +502,7 @@ module acc-devm {
 	       description "for VC";
 	     }
 	     leaf osu {
-	     	type stirng;
+	     	type string;
 		default "";
 		description "for OSU";
 	     }
