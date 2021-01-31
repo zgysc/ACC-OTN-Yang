@@ -237,6 +237,23 @@
     <mc-port>
       <!-- # entries: 1.. -->
     </mc-port>
+    <total-slot-number>
+      <!-- type: uint16 -->
+    </total-slot-number>
+    <xc-capabilities>
+      <xc-capability>
+        <!-- # keys: seq-->
+        <!-- # entries: 0.. -->
+        <seq>
+          <!-- type: uint16 -->
+        </seq>
+        <eth></eth>
+        <odu></odu>
+        <vc></vc>
+        <osu></osu>
+        <eo-osu></eo-osu>
+      </xc-capability>
+    </xc-capabilities>
   </me>
   <ptps xmlns="urn:ccsa:yang:acc-devm">
     <ptp>
@@ -245,6 +262,9 @@
       <name>
         <!-- type: string -->
       </name>
+      <eq>
+        <!-- type: string -->
+      </eq>
       <state-pac>
         <operational-state>
           <!-- type: operational-state -->
@@ -259,12 +279,8 @@
       <supported-layer-protocol-name>
         <!-- # entries: 0.. -->
       </supported-layer-protocol-name>
-      <peer-ip-address>
-        <!-- type: string -->
-      </peer-ip-address>
-      <peer-tcp-id>
-        <!-- type: string -->
-      </peer-tcp-id>
+      <peer-ip-address>0.0.0.0</peer-ip-address>
+      <peer-tcp-id>00000000</peer-tcp-id>
       <local-tcp-id>
         <!-- type: string -->
       </local-tcp-id>
@@ -406,6 +422,14 @@
           <!-- type: string -->
         </j0-actual-rx>
       </sdh-ptp-pac>
+      <osu-ptp-pac xmlns="urn:ccsa:yang:acc-osu">
+        <osu-signal-type>
+          <!-- # entries: 1.. -->
+        </osu-signal-type>
+        <adaptation-type>
+          <!-- # entries: 0.. -->
+        </adaptation-type>
+      </osu-ptp-pac>
     </ptp>
   </ptps>
   <ftps xmlns="urn:ccsa:yang:acc-devm">
@@ -415,6 +439,9 @@
       <name>
         <!-- type: string -->
       </name>
+      <eq>
+        <!-- type: string -->
+      </eq>
       <state-pac>
         <operational-state>
           <!-- type: operational-state -->
@@ -478,6 +505,17 @@
           <!-- type: string -->
         </j0-actual-rx>
       </sdh-ftp-pac>
+      <osu-ftp-pac xmlns="urn:ccsa:yang:acc-osu">
+        <available-tpn-number>
+          <!-- type: uint64 -->
+        </available-tpn-number>
+        <total-band-width>
+          <!-- type: uint64 -->
+        </total-band-width>
+        <available-band-width>
+          <!-- type: uint64 -->
+        </available-band-width>
+      </osu-ftp-pac>
     </ftp>
   </ftps>
   <ctps xmlns="urn:ccsa:yang:acc-devm">
@@ -641,6 +679,35 @@
           <!-- type: string -->
         </j1-actual-rx>
       </vc-ctp-pac>
+      <osu-ctp-pac xmlns="urn:ccsa:yang:acc-osu">
+        <osu-signal-type>
+          <!-- type: acc-enum:signal-type -->
+        </osu-signal-type>
+        <adaptation-type>
+          <!-- type: acc-enum:adaptation-type -->
+        </adaptation-type>
+        <tpn>
+          <!-- type: uint64 -->
+        </tpn>
+        <bandwidth>
+          <!-- type: uint64 -->
+        </bandwidth>
+        <pm-trail-trace-actual-tx>
+          <!-- type: string -->
+        </pm-trail-trace-actual-tx>
+        <pm-trail-trace-actual-rx>
+          <!-- type: string -->
+        </pm-trail-trace-actual-rx>
+        <pm-trail-trace-expected-tx>
+          <!-- type: string -->
+        </pm-trail-trace-expected-tx>
+        <tcm1-mode>
+          <!-- type: tcm-mode-type -->
+        </tcm1-mode>
+        <tcm2-mode>
+          <!-- type: tcm-mode-type -->
+        </tcm2-mode>
+      </osu-ctp-pac>
     </ctp>
   </ctps>
   <mc-ports xmlns="urn:ccsa:yang:acc-devm">
@@ -671,6 +738,9 @@
       <plug-state>
         <!-- type: boolean -->
       </plug-state>
+      <xc-capability>
+        <!-- type: boolean -->
+      </xc-capability>
       <eq-type>
         <!-- # entries: 1.. -->
       </eq-type>
@@ -726,6 +796,27 @@
       </analog-pm-value>
     </performance>
   </performances>
+  <pm-states xmlns="urn:ccsa:yang:acc-performance">
+    <pm-state>
+      <!-- # keys: object-name,pm-parameter-name,granularity-->
+      <!-- # entries: 0.. -->
+      <object-name>
+        <!-- type: string -->
+      </object-name>
+      <pm-parameter-name>
+        <!-- type: string -->
+      </pm-parameter-name>
+      <granularity>
+        <!-- type: acc-type:granularity -->
+      </granularity>
+      <object-type>
+        <!-- type: string -->
+      </object-type>
+      <pm-state>
+        <!-- type: boolean -->
+      </pm-state>
+    </pm-state>
+  </pm-states>
   <pgs xmlns="urn:ccsa:yang:acc-protection-group">
     <pg>
       <!-- # keys: pg-id-->

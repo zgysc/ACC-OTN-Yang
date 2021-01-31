@@ -2,9 +2,6 @@ module acc-osu {
     yang-version 1.1;
     namespace "urn:ccsa:yang:acc-osu";
     prefix acc-osu;
-    import ietf-yang-types {
-        prefix yang;
-    }
     import acc-yang-types {
          prefix acc-type; 
     }
@@ -32,8 +29,8 @@ module acc-osu {
     revision 2020-12-02 {
         description "init v1.0";
     }
-    revision 2021-01-30 {
-        description "for M-OTN";
+    revision 2021-01-31 {
+        description "for M-OTN 1.0";
     }
 
     
@@ -288,6 +285,7 @@ module acc-osu {
 	rpc get-osu-service-tp {
 	    input {
 		    leaf name {
+                mandatory true;
                 type string;
                 description "connection name";
             }
@@ -360,6 +358,7 @@ module acc-osu {
 	rpc get-eo-osu-service-tp {
 	    input {
 		    leaf name {
+                mandatory true;
                 type string;
                 description "connection name";
             }

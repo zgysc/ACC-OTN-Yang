@@ -107,8 +107,8 @@ module: acc-connection
         |  +--rw admin-state          admin-state
         +--rw layer-protocol-name    identityref
         +--rw requested-capacity
-        |  +--rw (for-odu-or-eth)?
-        |     +--:(for-odu-or-sdh)
+        |  +--rw (cir-or-totalsize)?
+        |     +--:(for-odusdhosu)
         |     |  +--rw total-size    uint64
         |     +--:(for-eth-or-eos)
         |        +--rw cir           uint64
@@ -144,9 +144,19 @@ module: acc-devm
   |  +--rw gate-way2?             inet:ipv4-address
   |  +--ro eq*                    -> /eqs/eq/name
   |  +--ro mc-port*               -> /mc-ports/mc-port/name
+  |  +--rw total-slot-number      uint16
+  |  +--rw xc-capabilities
+  |     +--rw xc-capability* [seq]
+  |        +--rw seq       uint16
+  |        +--rw eth?      string
+  |        +--rw odu?      string
+  |        +--rw vc?       string
+  |        +--rw osu?      string
+  |        +--rw eo-osu?   string
   +--rw ptps
   |  +--rw ptp* [name]
   |     +--rw name                             string
+  |     +--rw eq?                              string
   |     +--rw state-pac
   |     |  +--ro operational-state    operational-state
   |     |  +--rw admin-state          admin-state
@@ -197,15 +207,19 @@ module: acc-devm
   |     |  +--rw acc-sdh:supported-sdh-signal-types*   acc-enum:signal-type
   |     |  +--rw acc-sdh:switch-capability*            acc-enum:sdh-switch-type
   |     +--rw acc-sdh:sdh-ptp-pac
-  |        +--rw acc-sdh:current-sdh-signal-type       acc-enum:signal-type
-  |        +--ro acc-sdh:supported-sdh-signal-types*   acc-enum:signal-type
-  |        +--ro acc-sdh:switch-capability*            acc-enum:sdh-switch-type
-  |        +--rw acc-sdh:j0-actual-tx?                 string
-  |        +--rw acc-sdh:j0-expected-rx?               string
-  |        +--ro acc-sdh:j0-actual-rx?                 string
+  |     |  +--rw acc-sdh:current-sdh-signal-type       acc-enum:signal-type
+  |     |  +--ro acc-sdh:supported-sdh-signal-types*   acc-enum:signal-type
+  |     |  +--ro acc-sdh:switch-capability*            acc-enum:sdh-switch-type
+  |     |  +--rw acc-sdh:j0-actual-tx?                 string
+  |     |  +--rw acc-sdh:j0-expected-rx?               string
+  |     |  +--ro acc-sdh:j0-actual-rx?                 string
+  |     +--rw acc-osu:osu-ptp-pac
+  |        +--ro acc-osu:osu-signal-type*   acc-enum:signal-type
+  |        +--ro acc-osu:adaptation-type*   acc-enum:adaptation-type
   +--rw ftps
   |  +--rw ftp* [name]
   |     +--rw name                   string
+  |     +--rw eq?                    string
   |     +--rw state-pac
   |     |  +--ro operational-state    operational-state
   |     |  +--rw admin-state          admin-state
@@ -227,12 +241,16 @@ module: acc-devm
   |     |     +--ro acc-eos:rx-number?            uint64
   |     |     +--ro acc-eos:so-handshake-state?   boolean
   |     +--rw acc-sdh:sdh-ftp-pac
-  |        +--rw acc-sdh:sdh-signal-type         acc-enum:signal-type
-  |        +--ro acc-sdh:switch-capability*      acc-enum:sdh-switch-type
-  |        +--rw acc-sdh:service-mapping-mode?   acc-enum:adaptation-type
-  |        +--rw acc-sdh:j0-actual-tx?           string
-  |        +--rw acc-sdh:j0-expected-rx?         string
-  |        +--ro acc-sdh:j0-actual-rx?           string
+  |     |  +--rw acc-sdh:sdh-signal-type         acc-enum:signal-type
+  |     |  +--ro acc-sdh:switch-capability*      acc-enum:sdh-switch-type
+  |     |  +--rw acc-sdh:service-mapping-mode?   acc-enum:adaptation-type
+  |     |  +--rw acc-sdh:j0-actual-tx?           string
+  |     |  +--rw acc-sdh:j0-expected-rx?         string
+  |     |  +--ro acc-sdh:j0-actual-rx?           string
+  |     +--rw acc-osu:osu-ftp-pac
+  |        +--rw acc-osu:available-tpn-number    uint64
+  |        +--rw acc-osu:total-band-width        uint64
+  |        +--rw acc-osu:available-band-width    uint64
   +--rw ctps
   |  +--rw ctp* [name]
   |     +--rw name                   string
@@ -286,11 +304,21 @@ module: acc-devm
   |     |     +--rw acc-eth:lm-interval      oam-transmit-interval
   |     |     +--rw acc-eth:dm-interval      oam-transmit-interval
   |     +--rw acc-sdh:vc-ctp-pac
-  |        +--rw acc-sdh:vc-type           acc-enum:sdh-switch-type
-  |        +--rw acc-sdh:mapping-path      string
-  |        +--rw acc-sdh:j1-actual-tx?     string
-  |        +--rw acc-sdh:j1-expected-rx?   string
-  |        +--ro acc-sdh:j1-actual-rx?     string
+  |     |  +--rw acc-sdh:vc-type           acc-enum:sdh-switch-type
+  |     |  +--rw acc-sdh:mapping-path      string
+  |     |  +--rw acc-sdh:j1-actual-tx?     string
+  |     |  +--rw acc-sdh:j1-expected-rx?   string
+  |     |  +--ro acc-sdh:j1-actual-rx?     string
+  |     +--rw acc-osu:osu-ctp-pac
+  |        +--rw acc-osu:osu-signal-type?              acc-enum:signal-type
+  |        +--rw acc-osu:adaptation-type?              acc-enum:adaptation-type
+  |        +--rw acc-osu:tpn                           uint64
+  |        +--ro acc-osu:bandwidth?                    uint64
+  |        +--rw acc-osu:pm-trail-trace-actual-tx?     string
+  |        +--rw acc-osu:pm-trail-trace-actual-rx?     string
+  |        +--rw acc-osu:pm-trail-trace-expected-tx?   string
+  |        +--rw acc-osu:tcm1-mode?                    tcm-mode-type
+  |        +--rw acc-osu:tcm2-mode?                    tcm-mode-type
   +--rw mc-ports
   |  +--rw mc-port* [name]
   |     +--rw name                 string
@@ -301,6 +329,7 @@ module: acc-devm
      +--rw eq* [name]
         +--rw name                string
         +--ro plug-state          boolean
+        +--ro xc-capability?      boolean
         +--ro eq-type*            eq-type
         +--ro software-version?   string
         +--ro hardware-version?   string
@@ -338,8 +367,8 @@ module: acc-eos
     |  |  +---w service-type            acc-devm:service-type
     |  |  +---w layer-protocol-name     identityref
     |  |  +---w requested-capacity
-    |  |  |  +---w (for-odu-or-eth)?
-    |  |  |     +--:(for-odu-or-sdh)
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
     |  |  |     |  +---w total-size    uint64
     |  |  |     +--:(for-eth-or-eos)
     |  |  |        +---w cir           uint64
@@ -363,12 +392,14 @@ module: acc-eos
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w secondary-nni
     |  |  |  +---w nni-ptp-name?        string
     |  |  |  +---w nni-ts-detail?       string
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w eos-pac
     |  |     +---w sdh-signal-type?           acc-enum:signal-type
     |  |     +---w vc-type                    acc-enum:sdh-switch-type
@@ -388,8 +419,8 @@ module: acc-eos
     |     |  |  +--ro admin-state          admin-state
     |     |  +--ro layer-protocol-name    identityref
     |     |  +--ro requested-capacity
-    |     |  |  +--ro (for-odu-or-eth)?
-    |     |  |     +--:(for-odu-or-sdh)
+    |     |  |  +--ro (cir-or-totalsize)?
+    |     |  |     +--:(for-odusdhosu)
     |     |  |     |  +--ro total-size    uint64
     |     |  |     +--:(for-eth-or-eos)
     |     |  |        +--ro cir           uint64
@@ -404,111 +435,145 @@ module: acc-eos
     |        +--ro ftp-name*             string
     |        +--ro ctp-name*             string
     +---x modify-vcg-connection-capacity
+    |  +---w input
+    |  |  +---w eth-ftp-name              string
+    |  |  +---w sdh-ftp-name              string
+    |  |  +---w sdh-protect-ftp-name?     string
+    |  |  +---w mapping-path*             string
+    |  |  +---w mapping-path-protected*   string
+    |  +--ro output
+    |     +--ro connection-name*   string
+    |     +--ro ctp-name*          string
+    +---x get-eos-service-tp
        +---w input
-       |  +---w eth-ftp-name              string
-       |  +---w sdh-ftp-name              string
-       |  +---w sdh-protect-ftp-name?     string
-       |  +---w mapping-path*             string
-       |  +---w mapping-path-protected*   string
+       |  +---w name          string
+       |  +---w service-id?   string
        +--ro output
-          +--ro connection-name*   string
-          +--ro ctp-name*          string
+          +--ro eth-ptp-ctp     string
+          +--ro eth-ftp-ctp     string
+          +--ro eth-ftp         string
+          +--ro sdh-ftp         string
+          +--ro sdh-ftp-p       string
+          +--ro ul-odu-ctp?     string
+          +--ro ul-odu-ctp-p?   string
+          +--ro vc-cascade* []
+             +--ro eth-ftp-vc-ctp?   string
+             +--ro sdh-ftp-ctp?      string
+             +--ro sdh-ftp-ctp-p?    string
 module: acc-eth
 
   rpcs:
     +---x create-eth-connection
+    |  +---w input
+    |  |  +---w label?                  string
+    |  |  +---w service-type            acc-devm:service-type
+    |  |  +---w layer-protocol-name     identityref
+    |  |  +---w requested-capacity
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
+    |  |  |     |  +---w total-size    uint64
+    |  |  |     +--:(for-eth-or-eos)
+    |  |  |        +---w cir           uint64
+    |  |  |        +---w pir?          uint64
+    |  |  |        +---w cbs?          uint64
+    |  |  |        +---w pbs?          uint64
+    |  |  +---w service-mapping-mode?   acc-enum:adaptation-type
+    |  |  +---w uni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni2-protection-type?   acc-pg:protection-type
+    |  |  +---w eth-uni
+    |  |  |  +---w uni-ptp-name?          string
+    |  |  |  +---w second-uni-ptp-name?   string
+    |  |  |  +---w client-vlan-spec
+    |  |  |     +---w vlan-id*         uint64
+    |  |  |     +---w vlan-priority?   uint64
+    |  |  |     +---w access-action?   access-action
+    |  |  |     +---w vlan-type?       vlan-type
+    |  |  +---w primary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w ftp-vlan-spec
+    |  |  |     +---w vlan-id*         uint64
+    |  |  |     +---w vlan-priority?   uint64
+    |  |  |     +---w access-action?   access-action
+    |  |  |     +---w vlan-type?       vlan-type
+    |  |  +---w secondary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w ftp-vlan-spec
+    |  |  |     +---w vlan-id*         uint64
+    |  |  |     +---w vlan-priority?   uint64
+    |  |  |     +---w access-action?   access-action
+    |  |  |     +---w vlan-type?       vlan-type
+    |  |  +---w primary-nni2
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w ftp-vlan-spec
+    |  |  |     +---w vlan-id*         uint64
+    |  |  |     +---w vlan-priority?   uint64
+    |  |  |     +---w access-action?   access-action
+    |  |  |     +---w vlan-type?       vlan-type
+    |  |  +---w secondary-nni2
+    |  |     +---w nni-ptp-name?        string
+    |  |     +---w nni-ts-detail?       string
+    |  |     +---w adaptation-type?     acc-enum:adaptation-type
+    |  |     +---w odu-signal-type?     acc-enum:signal-type
+    |  |     +---w switch-capability?   acc-enum:odu-switch-type
+    |  |     +---w tpn?                 uint64
+    |  |     +---w ftp-vlan-spec
+    |  |        +---w vlan-id*         uint64
+    |  |        +---w vlan-priority?   uint64
+    |  |        +---w access-action?   access-action
+    |  |        +---w vlan-type?       vlan-type
+    |  +--ro output
+    |     +--ro connection
+    |     |  +--ro name                   string
+    |     |  +--ro label?                 string
+    |     |  +--ro state-pac
+    |     |  |  +--ro operational-state    operational-state
+    |     |  |  +--ro admin-state          admin-state
+    |     |  +--ro layer-protocol-name    identityref
+    |     |  +--ro requested-capacity
+    |     |  |  +--ro (cir-or-totalsize)?
+    |     |  |     +--:(for-odusdhosu)
+    |     |  |     |  +--ro total-size    uint64
+    |     |  |     +--:(for-eth-or-eos)
+    |     |  |        +--ro cir           uint64
+    |     |  |        +--ro pir?          uint64
+    |     |  |        +--ro cbs?          uint64
+    |     |  |        +--ro pbs?          uint64
+    |     |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
+    |     |  +--ro service-type           acc-devm:service-type
+    |     |  +--ro pg-id*                 uint16
+    |     +--ro create-component
+    |        +--ro ftp-name*   string
+    |        +--ro ctp-name*   string
+    +---x get-eth-service-tp
        +---w input
-       |  +---w label?                  string
-       |  +---w service-type            acc-devm:service-type
-       |  +---w layer-protocol-name     identityref
-       |  +---w requested-capacity
-       |  |  +---w (for-odu-or-eth)?
-       |  |     +--:(for-odu-or-sdh)
-       |  |     |  +---w total-size    uint64
-       |  |     +--:(for-eth-or-eos)
-       |  |        +---w cir           uint64
-       |  |        +---w pir?          uint64
-       |  |        +---w cbs?          uint64
-       |  |        +---w pbs?          uint64
-       |  +---w service-mapping-mode?   acc-enum:adaptation-type
-       |  +---w uni-protection-type?    acc-pg:protection-type
-       |  +---w nni-protection-type?    acc-pg:protection-type
-       |  +---w nni2-protection-type?   acc-pg:protection-type
-       |  +---w eth-uni
-       |  |  +---w uni-ptp-name?          string
-       |  |  +---w second-uni-ptp-name?   string
-       |  |  +---w client-vlan-spec
-       |  |     +---w vlan-id*         uint64
-       |  |     +---w vlan-priority?   uint64
-       |  |     +---w access-action?   access-action
-       |  |     +---w vlan-type?       vlan-type
-       |  +---w primary-nni
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w ftp-vlan-spec
-       |  |     +---w vlan-id*         uint64
-       |  |     +---w vlan-priority?   uint64
-       |  |     +---w access-action?   access-action
-       |  |     +---w vlan-type?       vlan-type
-       |  +---w secondary-nni
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w ftp-vlan-spec
-       |  |     +---w vlan-id*         uint64
-       |  |     +---w vlan-priority?   uint64
-       |  |     +---w access-action?   access-action
-       |  |     +---w vlan-type?       vlan-type
-       |  +---w primary-nni2
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w ftp-vlan-spec
-       |  |     +---w vlan-id*         uint64
-       |  |     +---w vlan-priority?   uint64
-       |  |     +---w access-action?   access-action
-       |  |     +---w vlan-type?       vlan-type
-       |  +---w secondary-nni2
-       |     +---w nni-ptp-name?        string
-       |     +---w nni-ts-detail?       string
-       |     +---w adaptation-type?     acc-enum:adaptation-type
-       |     +---w odu-signal-type?     acc-enum:signal-type
-       |     +---w switch-capability?   acc-enum:odu-switch-type
-       |     +---w ftp-vlan-spec
-       |        +---w vlan-id*         uint64
-       |        +---w vlan-priority?   uint64
-       |        +---w access-action?   access-action
-       |        +---w vlan-type?       vlan-type
+       |  +---w name          string
+       |  +---w service-id?   string
        +--ro output
-          +--ro connection
-          |  +--ro name                   string
-          |  +--ro label?                 string
-          |  +--ro state-pac
-          |  |  +--ro operational-state    operational-state
-          |  |  +--ro admin-state          admin-state
-          |  +--ro layer-protocol-name    identityref
-          |  +--ro requested-capacity
-          |  |  +--ro (for-odu-or-eth)?
-          |  |     +--:(for-odu-or-sdh)
-          |  |     |  +--ro total-size    uint64
-          |  |     +--:(for-eth-or-eos)
-          |  |        +--ro cir           uint64
-          |  |        +--ro pir?          uint64
-          |  |        +--ro cbs?          uint64
-          |  |        +--ro pbs?          uint64
-          |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
-          |  +--ro service-type           acc-devm:service-type
-          |  +--ro pg-id*                 uint16
-          +--ro create-component
-             +--ro ftp-name*   string
-             +--ro ctp-name*   string
+          +--ro eth-ptp-ctp?      string
+          +--ro ul-eth-ftp        string
+          +--ro ul-eth-ftp-ctp    string
+          +--ro dl-eth-ftp?       string
+          +--ro dl-eth-ftp-ctp?   string
+          +--ro ul-odu-ctp        string
+          +--ro ul-odu-ctp-p?     string
+          +--ro dl-odu-ctp?       string
+          +--ro dl-odu-ctp-p?     string
 
   notifications:
     +---n lldp-change-notification
@@ -537,6 +602,199 @@ module: acc-notifications
           +--ro attribute-name    string
           +--ro new-value         string
           +--ro old-value?        string
+module: acc-osu
+
+  rpcs:
+    +---x osu-two-way-dm
+    |  +---w input
+    |  |  +---w ctp-name    string
+    |  |  +---w dm-type     string
+    |  +--ro output
+    |     +--ro osu-delay    uint64
+    +---x create-eo-osu-connection
+    |  +---w input
+    |  |  +---w label?                 string
+    |  |  +---w service-type           acc-devm:service-type
+    |  |  +---w layer-protocol-name    identityref
+    |  |  +---w requested-capacity
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
+    |  |  |     |  +---w total-size    uint64
+    |  |  |     +--:(for-eth-or-eos)
+    |  |  |        +---w cir           uint64
+    |  |  |        +---w pir?          uint64
+    |  |  |        +---w cbs?          uint64
+    |  |  |        +---w pbs?          uint64
+    |  |  +---w uni-protection-type?   acc-pg:protection-type
+    |  |  +---w nni-protection-type?   acc-pg:protection-type
+    |  |  +---w eth-uni
+    |  |  |  +---w uni-ptp-name           string
+    |  |  |  +---w second-uni-ptp-name?   string
+    |  |  |  +---w client-vlan-spec
+    |  |  |  |  +---w vlan-id*         uint64
+    |  |  |  |  +---w vlan-priority?   uint64
+    |  |  |  |  +---w access-action?   access-action
+    |  |  |  |  +---w vlan-type?       vlan-type
+    |  |  |  +---w uni-vlan-spec
+    |  |  |     +---w vlan-id*         uint64
+    |  |  |     +---w vlan-priority?   uint64
+    |  |  |     +---w access-action?   access-action
+    |  |  |     +---w vlan-type?       vlan-type
+    |  |  +---w primary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  +---w secondary-nni
+    |  |     +---w nni-ptp-name?        string
+    |  |     +---w nni-ts-detail?       string
+    |  |     +---w adaptation-type?     acc-enum:adaptation-type
+    |  |     +---w odu-signal-type?     acc-enum:signal-type
+    |  |     +---w switch-capability?   acc-enum:odu-switch-type
+    |  |     +---w tpn?                 uint64
+    |  +--ro output
+    |     +--ro connection
+    |     |  +--ro name                   string
+    |     |  +--ro label?                 string
+    |     |  +--ro state-pac
+    |     |  |  +--ro operational-state    operational-state
+    |     |  |  +--ro admin-state          admin-state
+    |     |  +--ro layer-protocol-name    identityref
+    |     |  +--ro requested-capacity
+    |     |  |  +--ro (cir-or-totalsize)?
+    |     |  |     +--:(for-odusdhosu)
+    |     |  |     |  +--ro total-size    uint64
+    |     |  |     +--:(for-eth-or-eos)
+    |     |  |        +--ro cir           uint64
+    |     |  |        +--ro pir?          uint64
+    |     |  |        +--ro cbs?          uint64
+    |     |  |        +--ro pbs?          uint64
+    |     |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
+    |     |  +--ro service-type           acc-devm:service-type
+    |     |  +--ro pg-id*                 uint16
+    |     +--ro create-component
+    |        +--ro ftp-name*   string
+    |        +--ro ctp-name*   string
+    +---x create-osu-connection
+    |  +---w input
+    |  |  +---w label?                  string
+    |  |  +---w service-type            acc-devm:service-type
+    |  |  +---w layer-protocol-name     identityref
+    |  |  +---w requested-capacity
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
+    |  |  |     |  +---w total-size    uint64
+    |  |  |     +--:(for-eth-or-eos)
+    |  |  |        +---w cir           uint64
+    |  |  |        +---w pir?          uint64
+    |  |  |        +---w cbs?          uint64
+    |  |  |        +---w pbs?          uint64
+    |  |  +---w uni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni2-protection-type?   acc-pg:protection-type
+    |  |  +---w uni
+    |  |  |  +---w uni-ptp-name?          string
+    |  |  |  +---w second-uni-ptp-name?   string
+    |  |  |  +---w client-signal-type?    acc-enum:signal-type
+    |  |  +---w primary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  +---w secondary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  +---w primary-nni2
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  +---w secondary-nni2
+    |  |     +---w nni-ptp-name?        string
+    |  |     +---w nni-ts-detail?       string
+    |  |     +---w adaptation-type?     acc-enum:adaptation-type
+    |  |     +---w odu-signal-type?     acc-enum:signal-type
+    |  |     +---w switch-capability?   acc-enum:odu-switch-type
+    |  |     +---w tpn?                 uint64
+    |  +--ro output
+    |     +--ro connection
+    |     |  +--ro name                   string
+    |     |  +--ro label?                 string
+    |     |  +--ro state-pac
+    |     |  |  +--ro operational-state    operational-state
+    |     |  |  +--ro admin-state          admin-state
+    |     |  +--ro layer-protocol-name    identityref
+    |     |  +--ro requested-capacity
+    |     |  |  +--ro (cir-or-totalsize)?
+    |     |  |     +--:(for-odusdhosu)
+    |     |  |     |  +--ro total-size    uint64
+    |     |  |     +--:(for-eth-or-eos)
+    |     |  |        +--ro cir           uint64
+    |     |  |        +--ro pir?          uint64
+    |     |  |        +--ro cbs?          uint64
+    |     |  |        +--ro pbs?          uint64
+    |     |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
+    |     |  +--ro service-type           acc-devm:service-type
+    |     |  +--ro pg-id*                 uint16
+    |     +--ro create-component
+    |        +--ro ftp-name*   string
+    |        +--ro ctp-name*   string
+    +---x get-osu-service-tp
+    |  +---w input
+    |  |  +---w name          string
+    |  |  +---w service-id?   string
+    |  +--ro output
+    |     +--ro osu-ptp-ctp?        string
+    |     +--ro ul-osu-ftp          string
+    |     +--ro ul-osu-ftp-ctp      string
+    |     +--ro ul-osu-ftp-p?       string
+    |     +--ro ul-osu-ftp-ctp-p?   string
+    |     +--ro dl-odu-ctp?         string
+    |     +--ro dl-odu-ctp-p?       string
+    |     +--ro dl-osu-ftp?         string
+    |     +--ro dl-osu-ftp-ctp?     string
+    |     +--ro dl-osu-ftp-p?       string
+    |     +--ro dl-osu-ftp-ctp-p?   string
+    |     +--ro ul-odu-ctp          string
+    |     +--ro ul-odu-ctp-p?       string
+    +---x get-eo-osu-service-tp
+    |  +---w input
+    |  |  +---w name          string
+    |  |  +---w service-id?   string
+    |  +--ro output
+    |     +--ro eth-ptp-ctp        string
+    |     +--ro eth-ftp-ctp        string
+    |     +--ro eth-ftp            string
+    |     +--ro eth-ftp-osu-ctp    string
+    |     +--ro osu-ftp            string
+    |     +--ro osu-ftp-ctp        string
+    |     +--ro osu-ftp-p?         string
+    |     +--ro osu-ftp-ctp-p?     string
+    |     +--ro ul-odu-ctp         string
+    |     +--ro ul-odu-ctp-p?      string
+    +---x modify-osu-connection-capacity
+       +---w input
+          +---w ctp-name            string
+          +---w (cir-or-totalsize)?
+          |  +--:(for-odusdhosu)
+          |  |  +---w total-size    uint64
+          |  +--:(for-eth-or-eos)
+          |     +---w cir           uint64
+          |     +---w pir?          uint64
+          |     +---w cbs?          uint64
+          |     +---w pbs?          uint64
+          +---w timer               uint64
+          +---w action              acc-otn:modify-action
 module: acc-otn
 
   rpcs:
@@ -546,8 +804,8 @@ module: acc-otn
     |  |  +---w service-type            acc-devm:service-type
     |  |  +---w layer-protocol-name     identityref
     |  |  +---w requested-capacity
-    |  |  |  +---w (for-odu-or-eth)?
-    |  |  |     +--:(for-odu-or-sdh)
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
     |  |  |     |  +---w total-size    uint64
     |  |  |     +--:(for-eth-or-eos)
     |  |  |        +---w cir           uint64
@@ -562,30 +820,35 @@ module: acc-otn
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w primary-nni
     |  |  |  +---w nni-ptp-name?        string
     |  |  |  +---w nni-ts-detail?       string
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w secondary-nni
     |  |  |  +---w nni-ptp-name?        string
     |  |  |  +---w nni-ts-detail?       string
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w primary-nni2
     |  |  |  +---w nni-ptp-name?        string
     |  |  |  +---w nni-ts-detail?       string
     |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
     |  |  |  +---w odu-signal-type?     acc-enum:signal-type
     |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
     |  |  +---w secondary-nni2
     |  |     +---w nni-ptp-name?        string
     |  |     +---w nni-ts-detail?       string
     |  |     +---w adaptation-type?     acc-enum:adaptation-type
     |  |     +---w odu-signal-type?     acc-enum:signal-type
     |  |     +---w switch-capability?   acc-enum:odu-switch-type
+    |  |     +---w tpn?                 uint64
     |  +--ro output
     |     +--ro connection
     |        +--ro name                   string
@@ -595,8 +858,8 @@ module: acc-otn
     |        |  +--ro admin-state          admin-state
     |        +--ro layer-protocol-name    identityref
     |        +--ro requested-capacity
-    |        |  +--ro (for-odu-or-eth)?
-    |        |     +--:(for-odu-or-sdh)
+    |        |  +--ro (cir-or-totalsize)?
+    |        |     +--:(for-odusdhosu)
     |        |     |  +--ro total-size    uint64
     |        |     +--:(for-eth-or-eos)
     |        |        +--ro cir           uint64
@@ -607,13 +870,22 @@ module: acc-otn
     |        +--ro service-type           acc-devm:service-type
     |        +--ro pg-id*                 uint16
     +---x modify-odu-connection-capacity
+    |  +---w input
+    |     +---w odu-ctp-name                         string
+    |     +---w position                             odu-position
+    |     +---w action?                              modify-action
+    |     +---w current-number-of-tributary-slots?   uint64
+    |     +---w ts-detail?                           string
+    |     +---w timeout                              uint64
+    +---x get-odu-service-tp
        +---w input
-          +---w odu-ctp-name                         string
-          +---w position                             odu-position
-          +---w action?                              modify-action
-          +---w current-number-of-tributary-slots?   uint64
-          +---w ts-detail?                           string
-          +---w timeout                              uint64
+       |  +---w name          string
+       |  +---w service-id?   string
+       +--ro output
+          +--ro ul-odu-ctp      string
+          +--ro ul-odu-ctp-p?   string
+          +--ro dl-odu-ctp?     string
+          +--ro dl-odu-ctp-p?   string
 
   notifications:
     +---n oduflex-notification
@@ -622,47 +894,61 @@ module: acc-otn
        +--ro modify-result               g-hao-modify-result
 module: acc-performance
   +--rw performances
-     +--ro performance* [object-name pm-parameter-name granularity start-time]
-        +--ro object-name               string
-        +--ro pm-parameter-name         string
-        +--ro granularity               acc-type:granularity
-        +--ro start-time                yang:date-and-time
-        +--ro object-type               string
-        +--ro (digital-or-analog)?
-           +--:(digital)
-           |  +--ro digital-pm-value?   acc-type:real
-           +--:(analog)
-              +--ro analog-pm-value
-                 +--ro max-value?       acc-type:real
-                 +--ro min-value?       acc-type:real
-                 +--ro average-value?   acc-type:real
-                 +--ro current-value    acc-type:real
+  |  +--ro performance* [object-name pm-parameter-name granularity start-time]
+  |     +--ro object-name               string
+  |     +--ro pm-parameter-name         string
+  |     +--ro granularity               acc-type:granularity
+  |     +--ro start-time                yang:date-and-time
+  |     +--ro object-type               string
+  |     +--ro (digital-or-analog)?
+  |        +--:(digital)
+  |        |  +--ro digital-pm-value?   acc-type:real
+  |        +--:(analog)
+  |           +--ro analog-pm-value
+  |              +--ro max-value?       acc-type:real
+  |              +--ro min-value?       acc-type:real
+  |              +--ro average-value?   acc-type:real
+  |              +--ro current-value    acc-type:real
+  +--rw pm-states
+     +--rw pm-state* [object-name pm-parameter-name granularity]
+        +--rw object-name          string
+        +--rw pm-parameter-name    string
+        +--rw granularity          acc-type:granularity
+        +--rw object-type?         string
+        +--rw pm-state?            boolean
 
   rpcs:
     +---x get-history-performance-monitoring-data
+    |  +---w input
+    |  |  +---w start-time           yang:date-and-time
+    |  |  +---w end-time             yang:date-and-time
+    |  |  +---w object-name?         string
+    |  |  +---w granularity          acc-type:granularity
+    |  |  +---w pm-parameter-name?   string
+    |  +--ro output
+    |     +--ro performances
+    |        +--ro performance* [object-name pm-parameter-name granularity start-time]
+    |           +--ro object-name               string
+    |           +--ro pm-parameter-name         string
+    |           +--ro granularity               acc-type:granularity
+    |           +--ro start-time                yang:date-and-time
+    |           +--ro object-type               string
+    |           +--ro (digital-or-analog)?
+    |              +--:(digital)
+    |              |  +--ro digital-pm-value?   acc-type:real
+    |              +--:(analog)
+    |                 +--ro analog-pm-value
+    |                    +--ro max-value?       acc-type:real
+    |                    +--ro min-value?       acc-type:real
+    |                    +--ro average-value?   acc-type:real
+    |                    +--ro current-value    acc-type:real
+    +---x set-pm-state
        +---w input
-       |  +---w start-time           yang:date-and-time
-       |  +---w end-time             yang:date-and-time
-       |  +---w object-name?         string
-       |  +---w granularity          acc-type:granularity
-       |  +---w pm-parameter-name?   string
-       +--ro output
-          +--ro performances
-             +--ro performance* [object-name pm-parameter-name granularity start-time]
-                +--ro object-name               string
-                +--ro pm-parameter-name         string
-                +--ro granularity               acc-type:granularity
-                +--ro start-time                yang:date-and-time
-                +--ro object-type               string
-                +--ro (digital-or-analog)?
-                   +--:(digital)
-                   |  +--ro digital-pm-value?   acc-type:real
-                   +--:(analog)
-                      +--ro analog-pm-value
-                         +--ro max-value?       acc-type:real
-                         +--ro min-value?       acc-type:real
-                         +--ro average-value?   acc-type:real
-                         +--ro current-value    acc-type:real
+          +---w object-name          string
+          +---w object-type          string
+          +---w granularity?         acc-type:granularity
+          +---w pm-parameter-name?   string
+          +---w pm-state             boolean
 module: acc-protection-group
   +--rw pgs
      +--rw pg* [pg-id]
@@ -708,91 +994,113 @@ module: acc-sdh
 
   rpcs:
     +---x create-sdh-connection
+    |  +---w input
+    |  |  +---w label?                  string
+    |  |  +---w service-type            acc-devm:service-type
+    |  |  +---w layer-protocol-name     identityref
+    |  |  +---w requested-capacity
+    |  |  |  +---w (cir-or-totalsize)?
+    |  |  |     +--:(for-odusdhosu)
+    |  |  |     |  +---w total-size    uint64
+    |  |  |     +--:(for-eth-or-eos)
+    |  |  |        +---w cir           uint64
+    |  |  |        +---w pir?          uint64
+    |  |  |        +---w cbs?          uint64
+    |  |  |        +---w pbs?          uint64
+    |  |  +---w service-mapping-mode?   acc-enum:adaptation-type
+    |  |  +---w uni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni-protection-type?    acc-pg:protection-type
+    |  |  +---w nni2-protection-type?   acc-pg:protection-type
+    |  |  +---w sdh-uni
+    |  |  |  +---w uni-ptp-name?   string
+    |  |  |  +---w vc-type?        acc-enum:sdh-switch-type
+    |  |  |  +---w mapping-path?   string
+    |  |  +---w second-sdh-uni
+    |  |  |  +---w uni-ptp-name?   string
+    |  |  |  +---w vc-type?        acc-enum:sdh-switch-type
+    |  |  |  +---w mapping-path?   string
+    |  |  +---w primary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w sdh-ftp
+    |  |  |     +---w sdh-type        acc-enum:signal-type
+    |  |  |     +---w vc-type         acc-enum:sdh-switch-type
+    |  |  |     +---w mapping-path    string
+    |  |  +---w secondary-nni
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w sdh-ftp
+    |  |  |     +---w sdh-type        acc-enum:signal-type
+    |  |  |     +---w vc-type         acc-enum:sdh-switch-type
+    |  |  |     +---w mapping-path    string
+    |  |  +---w primary-nni2
+    |  |  |  +---w nni-ptp-name?        string
+    |  |  |  +---w nni-ts-detail?       string
+    |  |  |  +---w adaptation-type?     acc-enum:adaptation-type
+    |  |  |  +---w odu-signal-type?     acc-enum:signal-type
+    |  |  |  +---w switch-capability?   acc-enum:odu-switch-type
+    |  |  |  +---w tpn?                 uint64
+    |  |  |  +---w sdh-ftp
+    |  |  |     +---w sdh-type        acc-enum:signal-type
+    |  |  |     +---w vc-type         acc-enum:sdh-switch-type
+    |  |  |     +---w mapping-path    string
+    |  |  +---w secondary-nni2
+    |  |     +---w nni-ptp-name?        string
+    |  |     +---w nni-ts-detail?       string
+    |  |     +---w adaptation-type?     acc-enum:adaptation-type
+    |  |     +---w odu-signal-type?     acc-enum:signal-type
+    |  |     +---w switch-capability?   acc-enum:odu-switch-type
+    |  |     +---w tpn?                 uint64
+    |  |     +---w sdh-ftp
+    |  |        +---w sdh-type        acc-enum:signal-type
+    |  |        +---w vc-type         acc-enum:sdh-switch-type
+    |  |        +---w mapping-path    string
+    |  +--ro output
+    |     +--ro connection
+    |     |  +--ro name                   string
+    |     |  +--ro label?                 string
+    |     |  +--ro state-pac
+    |     |  |  +--ro operational-state    operational-state
+    |     |  |  +--ro admin-state          admin-state
+    |     |  +--ro layer-protocol-name    identityref
+    |     |  +--ro requested-capacity
+    |     |  |  +--ro (cir-or-totalsize)?
+    |     |  |     +--:(for-odusdhosu)
+    |     |  |     |  +--ro total-size    uint64
+    |     |  |     +--:(for-eth-or-eos)
+    |     |  |        +--ro cir           uint64
+    |     |  |        +--ro pir?          uint64
+    |     |  |        +--ro cbs?          uint64
+    |     |  |        +--ro pbs?          uint64
+    |     |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
+    |     |  +--ro service-type           acc-devm:service-type
+    |     |  +--ro pg-id*                 uint16
+    |     +--ro create-component
+    |        +--ro ftp-name*   string
+    |        +--ro ctp-name*   string
+    +---x get-sdh-service-tp
        +---w input
-       |  +---w label?                  string
-       |  +---w service-type            acc-devm:service-type
-       |  +---w layer-protocol-name     identityref
-       |  +---w requested-capacity
-       |  |  +---w (for-odu-or-eth)?
-       |  |     +--:(for-odu-or-sdh)
-       |  |     |  +---w total-size    uint64
-       |  |     +--:(for-eth-or-eos)
-       |  |        +---w cir           uint64
-       |  |        +---w pir?          uint64
-       |  |        +---w cbs?          uint64
-       |  |        +---w pbs?          uint64
-       |  +---w service-mapping-mode?   acc-enum:adaptation-type
-       |  +---w uni-protection-type?    acc-pg:protection-type
-       |  +---w nni-protection-type?    acc-pg:protection-type
-       |  +---w nni2-protection-type?   acc-pg:protection-type
-       |  +---w sdh-uni
-       |  |  +---w uni-ptp-name?   string
-       |  |  +---w vc-type?        acc-enum:sdh-switch-type
-       |  |  +---w mapping-path?   string
-       |  +---w second-sdh-uni
-       |  |  +---w uni-ptp-name?   string
-       |  |  +---w vc-type?        acc-enum:sdh-switch-type
-       |  |  +---w mapping-path?   string
-       |  +---w primary-nni
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w sdh-ftp
-       |  |     +---w sdh-type        acc-enum:signal-type
-       |  |     +---w vc-type         acc-enum:sdh-switch-type
-       |  |     +---w mapping-path    string
-       |  +---w secondary-nni
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w sdh-ftp
-       |  |     +---w sdh-type        acc-enum:signal-type
-       |  |     +---w vc-type         acc-enum:sdh-switch-type
-       |  |     +---w mapping-path    string
-       |  +---w primary-nni2
-       |  |  +---w nni-ptp-name?        string
-       |  |  +---w nni-ts-detail?       string
-       |  |  +---w adaptation-type?     acc-enum:adaptation-type
-       |  |  +---w odu-signal-type?     acc-enum:signal-type
-       |  |  +---w switch-capability?   acc-enum:odu-switch-type
-       |  |  +---w sdh-ftp
-       |  |     +---w sdh-type        acc-enum:signal-type
-       |  |     +---w vc-type         acc-enum:sdh-switch-type
-       |  |     +---w mapping-path    string
-       |  +---w secondary-nni2
-       |     +---w nni-ptp-name?        string
-       |     +---w nni-ts-detail?       string
-       |     +---w adaptation-type?     acc-enum:adaptation-type
-       |     +---w odu-signal-type?     acc-enum:signal-type
-       |     +---w switch-capability?   acc-enum:odu-switch-type
-       |     +---w sdh-ftp
-       |        +---w sdh-type        acc-enum:signal-type
-       |        +---w vc-type         acc-enum:sdh-switch-type
-       |        +---w mapping-path    string
+       |  +---w name          string
+       |  +---w service-id?   string
        +--ro output
-          +--ro connection
-          |  +--ro name                   string
-          |  +--ro label?                 string
-          |  +--ro state-pac
-          |  |  +--ro operational-state    operational-state
-          |  |  +--ro admin-state          admin-state
-          |  +--ro layer-protocol-name    identityref
-          |  +--ro requested-capacity
-          |  |  +--ro (for-odu-or-eth)?
-          |  |     +--:(for-odu-or-sdh)
-          |  |     |  +--ro total-size    uint64
-          |  |     +--:(for-eth-or-eos)
-          |  |        +--ro cir           uint64
-          |  |        +--ro pir?          uint64
-          |  |        +--ro cbs?          uint64
-          |  |        +--ro pbs?          uint64
-          |  +--ro ctp*                   -> /acc-devm:ctps/ctp/name
-          |  +--ro service-type           acc-devm:service-type
-          |  +--ro pg-id*                 uint16
-          +--ro create-component
-             +--ro ftp-name*   string
-             +--ro ctp-name*   string
+          +--ro sdh-ptp-ctp?        string
+          +--ro ul-sdh-ftp          string
+          +--ro ul-sdh-ftp-ctp      string
+          +--ro ul-sdh-ftp-p?       string
+          +--ro ul-sdh-ftp-ctp-p?   string
+          +--ro dl-sdh-ftp?         string
+          +--ro dl-sdh-ftp-ctp?     string
+          +--ro dl-sdh-ftp-p?       string
+          +--ro dl-sdh-ftp-ctp-p?   string
+          +--ro ul-odu-ctp          string
+          +--ro ul-odu-ctp-p?       string
+          +--ro dl-odu-ctp?         string
+          +--ro dl-odu-ctp-p?       string

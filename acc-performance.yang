@@ -17,6 +17,9 @@ module acc-performance {
         description "Initial revision.";
         reference "RFC xxx";
     }
+    revision 2021-01-31 {
+        description "for M-OTN 1.0";
+    }
     /*
     * Groupings
     */   
@@ -86,12 +89,45 @@ module acc-performance {
         }
         description "performances";
     }
+
+    grouping pm-states {
+        list pm-state {
+            key 'object-name pm-parameter-name granularity';
+            leaf object-name {
+                type string {
+                    length "1..64";
+                }
+                description "object-name";
+            }
+            leaf pm-parameter-name {
+                type string;
+                description "pm-parameter-name";
+            }
+            leaf granularity {
+                type acc-type:granularity;
+                description "15min 24h";
+            }
+            leaf object-type {
+                type string;
+                description "ME,EQ,PTP";
+            }
+            leaf pm-state {
+                type boolean;
+                description "";
+            }
+        }   
+    }
     /*
     * The data tree
     */
     container performances {
         uses performances;
         description "performances container";
+    }
+
+    container pm-states {
+        uses pm-states;
+        description "performances states";
     }
     /*
     * Operations
@@ -126,5 +162,31 @@ module acc-performance {
                     uses performances;
                 } 
             }
+    }
+    rpc set-pm-state {
+            input {
+                
+                leaf object-name {
+                    mandatory true;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf object-type {
+                    mandatory true;
+                    type string;
+                }
+                leaf granularity {
+                    type acc-type:granularity;
+                }
+                leaf pm-parameter-name {
+                    type string;
+                }
+                leaf pm-state {
+                    mandatory true;
+                    type boolean;
+                }
+            }
+            
     }
 }        

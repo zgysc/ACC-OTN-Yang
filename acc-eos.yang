@@ -28,10 +28,10 @@ module acc-eos {
     }
 
     revision 2019-02-13 {
-        description
-            "Initial revision.";
-        reference
-            "xxx";
+        description "Initial revision.";
+    }
+    revision 2021-01-31 {
+        description "for M-OTN 1.0";
     }
 
     augment "/acc-devm:ftps/acc-devm:ftp/acc-eth:eth-ftp-pac" {
@@ -45,16 +45,17 @@ module acc-eos {
     grouping vc-cascade {
         leaf eth-ftp-vc-ctp {
             type string;
-            description "第n个VC时隙";
+            description "VC级联时，当前VC时隙对应的ETH FTP关联的VC CTP";
         }
         leaf sdh-ftp-ctp {
             type string;
-            description "第n个对应的SDH CTP";
+            description "VC级联时，当前VC时隙对应的SDH FTP(主)的 VC CTP";
         }
         leaf sdh-ftp-ctp-p {
             type string;
-            description "第n个对应的SDH保护CTP";
+            description "VC级联时，当前VC时隙对应的SDH FTP(备)的 VC CTP";
         }
+        description "无论当前业务是否VC级联，会有1..* 组vc-cascade";
     }
     
     rpc create-eos-connection {
@@ -211,49 +212,58 @@ module acc-eos {
         }
     }
     
-    rpc get-eos-connection-detail {
+    rpc get-eos-service-tp {
         input {
             leaf name {
+                mandatory true;
                 type string;
-                description "正常管控下发的connection，不支持查询动态衍生出的connec";
+                description "connection name";
+            }
+            leaf service-id {
+                type string;
+                description "管控下发的connection的label";
             }
         }
         output {
-            container create-component {
-                leaf eth-ptp-ctp {
-                    type string;
-                    description "客户侧 PTP 的子 CTP";
-                }
-				leaf eth-ftp-ctp {
-                    type string;
-                    description "ETH FTP 的子 CTP";
-                }
-				leaf eth-ftp {
-                    type string;
-                    description "ETH FTP";
-                }
-				leaf sdh-ftp {
-                    type string;
-                    description "SDH FTP";
-                }
-				leaf sdh-ftp-p {
-                    type string;
-                    description "SDH FTP 保护口";
-                }
-				leaf ul-odu-ctp {
-                    type string;
-                    description "上联 PTP 主口的子 ODU CTP";
-                }
-                leaf ul-odu-ctp-p {
-                    type string;
-                    description "上联 PTP 保护口的子 ODU CTP,有保护则上报";
-                }
-                list vc-cascade {
-                    min-elements 1;
-                    uses vc-cascade;
-                    description "多个eth-ftp-ctp对应多个vc时隙";
-                }
+            leaf eth-ptp-ctp {
+                mandatory true;
+                type string;
+                description "客户侧 PTP 的子 CTP";
             }
+			leaf eth-ftp-ctp {
+                mandatory true;
+                type string;
+                description "ETH FTP 的子 CTP";
+            }
+			leaf eth-ftp {
+                mandatory true;
+                type string;
+                description "ETH FTP";
+            }
+			leaf sdh-ftp {
+                mandatory true;
+                type string;
+                description "SDH FTP(主)";
+            }
+			leaf sdh-ftp-p {
+                mandatory true;
+                type string;
+                description "SDH FTP(备)";
+            }
+			leaf ul-odu-ctp {
+                type string;
+                description "上联 ODU CTP(主)";
+            }
+            leaf ul-odu-ctp-p {
+                type string;
+                description "上联 ODU CTP(备),有保护才上报";
+            }
+            list vc-cascade {
+                min-elements 1;
+                uses vc-cascade;
+                description "多个eth-ftp-ctp对应多个vc时隙";
+            }
+
         }
     }               
 }

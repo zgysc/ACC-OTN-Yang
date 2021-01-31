@@ -20,20 +20,17 @@ module acc-otn {
         prefix acc-pg;
     }
 
-    organization
-        "xxx";
+    organization "xxx";
 
-    contact
-        "xxx";
+    contact "xxx";
 
-    description
-        "xxx";
+    description "xxx";
 
     revision 2019-02-13 {
-        description
-            "Initial revision.";
-        reference
-            "xxx";
+        description "Initial revision.";
+    }
+    revision 2021-01-31 {
+        description "for M-OTN 1.0";
     }
     /*
     * common types
@@ -414,51 +411,29 @@ module acc-otn {
         }
     }
 
-    rpc get-odu-connection-detail {
+    rpc get-odu-service-tp {
         input {
             leaf name {
+                mandatory true;
                 type string;
-                description "正常管控下发的connection,不支持查询动态衍生出的connection";
+                description "connection name";
+            }
+            leaf service-id {
+                type string;
+                description "管控下发的connection的label";
             }
 
         }
         output {
-            uses acc-con:create-connection;
-            leaf nni-protection-type {
-                type acc-pg:protection-type;
-            }
-            leaf nni2-protection-type {
-                type acc-pg:protection-type;
-            }
-            container client-side-nni {
-                uses nni;
-                description "client side nni, only for UNI-NNI";
-            }
-            container primary-nni {
-                uses nni;
-                description "primary nni, mandatory true";
-            }
-            container secondary-nni {
-                uses nni;
-                description "only for service with protection. Optional";
-            }
-            container primary-nni2 {
-                uses nni;
-                description "only NNI2NNI mode, optional!";
-            }
-            container secondary-nni2 {
-                uses nni;
-                description "only NNI2NNI mode and with protection. optional";
-            }  
             
-        container create-component {
           leaf ul-odu-ctp {
+            mandatory true;
             type string;
             description "上联 主用 ODU CTP";
           }
           leaf ul-odu-ctp-p {
             type string;
-            description "上联 保护口的 ODU CTP（有保护则上报）";
+            description "上联 保护口的 ODU CTP（有保护才上报）";
           }
           leaf dl-odu-ctp {
             type string;
@@ -466,11 +441,9 @@ module acc-otn {
           }
           leaf dl-odu-ctp-p {
             type string;
-            description "下联 保护口的 ODU CTP（only NNI-NNI，有保护则上报）";
+            description "下联 保护口的 ODU CTP（only NNI-NNI，有保护才上报）";
           }                    
         }
-        
     }
- }
     
 }

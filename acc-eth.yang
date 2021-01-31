@@ -32,6 +32,9 @@ module acc-eth {
     revision 2020-02-09 {
         description "remove useless grouping eth-nni";
     }
+    revision 2021-01-31 {
+        description "for M-OTN 1.0";
+    }
 
     /*
    * common types
@@ -111,7 +114,7 @@ module acc-eth {
                 value 1;
                 description "Ethernet over SDH.";
             }
-	    enum EoOSU {
+	         enum EoOSU {
                 value 2;
                 description "Ethernet over OSU.";
             }
@@ -455,88 +458,30 @@ module acc-eth {
         }
     }
     
-    rpc get-eth-connection-detail {
+    rpc get-eth-service-tp {
         input {
             leaf name {
+                mandatory true;
                 type string;
-                description "正常管控下发的connection,不支持查询动态衍生出的connection";
+                description "connection name";
             }
-
+            leaf service-id {
+                type string;
+                description "管控下发的connection的label";
+            }
         }
         output {
-            uses acc-con:create-connection;
-            leaf service-mapping-mode {
-                type acc-enum:adaptation-type;
-                default "GFP-F";
-            }
-            leaf uni-protection-type {
-                type acc-pg:protection-type;
-                description "default lag, only for UNI-NNI";
-            }
-            leaf nni-protection-type {
-                type acc-pg:protection-type;
-            }
-            leaf nni2-protection-type {
-                type acc-pg:protection-type;
-                description "only for NNI-NNI";
-            }
-            container eth-uni {
-                leaf uni-ptp-name {
-                    type string;
-                }
-                leaf second-uni-ptp-name {
-                    type string;
-                }
-                container client-vlan-spec {
-		          when "../../service-type = 'EVPL'";
-                    uses acc-con:vlan-spec;
-                    description "只适用于EVPL，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
-                }
-            }
-
-            container primary-nni {
-                uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
-                }
-                description "primary nni,必选";
-            }
-            container secondary-nni {
-                uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
-                }
-                description "带保护，可选";
-            }
-            container primary-nni2 {
-                uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
-                }
-                description "only for NNI-NNI";
-            }
-            container secondary-nni2 {
-                uses acc-otn:nni;
-                container ftp-vlan-spec {
-                    uses acc-con:vlan-spec;
-                    description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
-                }
-                description "only for NNI-NNI带保护";
-            }
-   
-		container create-component {
 		  leaf eth-ptp-ctp {
 		    type string;
 		    description "客户侧 PTP的子CTP（only UNI-NNI）";
 		  }
 		  leaf ul-eth-ftp {
+            mandatory true;
 		    type string;
 		    description "上联 ETH FTP";
 		  }
 		  leaf ul-eth-ftp-ctp {
+            mandatory true;
 		    type string;
 		    description "上联 ETH FTP的 子CTP";
 		  }
@@ -549,22 +494,22 @@ module acc-eth {
 		    description "下联 ETH FTP的 子CTP, only NNI-NNI";
 		  }
 		  leaf ul-odu-ctp {
+            mandatory true;
 		    type string;
-		    description "上联 主用 ODU CTP";
+		    description "上联 ODU CTP(主)";
 		  }
 		  leaf ul-odu-ctp-p {
 		    type string;
-		    description "上联 保护口的 ODU CTP（有保护则上报）";
+		    description "上联 ODU CTP(备)（有保护才上报）";
 		  }
 		  leaf dl-odu-ctp {
 		    type string;
-		    description "下联 主用 ODU CTP（only NNI-NNI）";
+		    description "下联 ODU CTP(主)（only NNI-NNI）";
 		  }
 		  leaf dl-odu-ctp-p {
 		    type string;
-		    description "下联 保护口的 ODU CTP（only NNI-NNI，有保护则上报）";
+		    description "下联 ODU CTP(备)（only NNI-NNI，有保护才上报）";
 		  }                    
-		}
-          }
-    	}
+        }
+    }
 }
