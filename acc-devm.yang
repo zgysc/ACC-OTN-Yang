@@ -654,6 +654,9 @@ module acc-devm {
                 length "1..64";
                 }
             }
+			leaf model {
+				type string;
+			}
             leaf plug-state {
                 mandatory true;
                 type boolean;
@@ -687,13 +690,7 @@ module acc-devm {
                     path '/acc-devm:ptps/acc-devm:ptp/acc-devm:name';
                 }
                 config false;
-            }
-	     leaf-list ftp {
-                min-elements 0;
-                type leafref {
-                    path '/acc-devm:ptps/acc-devm:ptp/acc-devm:name';
-                }
-                config false;
+                description "仅保留此字段，后续不使用此值，因在ptp中已标识父EQ";
             }
         }
     }

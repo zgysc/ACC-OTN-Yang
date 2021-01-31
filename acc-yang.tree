@@ -328,13 +328,13 @@ module: acc-devm
   +--rw eqs
      +--rw eq* [name]
         +--rw name                string
+        +--rw model?              string
         +--ro plug-state          boolean
         +--ro xc-capability?      boolean
         +--ro eq-type*            eq-type
         +--ro software-version?   string
         +--ro hardware-version?   string
         +--ro ptp*                -> /ptps/ptp/name
-        +--ro ftp*                -> /ptps/ptp/name
 
   rpcs:
     +---x reset

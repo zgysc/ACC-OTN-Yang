@@ -735,6 +735,9 @@
       <name>
         <!-- type: string -->
       </name>
+      <model>
+        <!-- type: string -->
+      </model>
       <plug-state>
         <!-- type: boolean -->
       </plug-state>
@@ -753,9 +756,6 @@
       <ptp>
         <!-- # entries: 0.. -->
       </ptp>
-      <ftp>
-        <!-- # entries: 0.. -->
-      </ftp>
     </eq>
   </eqs>
   <performances xmlns="urn:ccsa:yang:acc-performance">
