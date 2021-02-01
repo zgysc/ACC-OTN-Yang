@@ -156,7 +156,8 @@ module: acc-devm
   +--rw ptps
   |  +--rw ptp* [name]
   |     +--rw name                             string
-  |     +--rw eq?                              string
+  |     +--rw eq                               string
+  |     +--rw direction                        string
   |     +--rw state-pac
   |     |  +--ro operational-state    operational-state
   |     |  +--rw admin-state          admin-state
@@ -219,7 +220,7 @@ module: acc-devm
   +--rw ftps
   |  +--rw ftp* [name]
   |     +--rw name                   string
-  |     +--rw eq?                    string
+  |     +--rw eq                     string
   |     +--rw state-pac
   |     |  +--ro operational-state    operational-state
   |     |  +--rw admin-state          admin-state
