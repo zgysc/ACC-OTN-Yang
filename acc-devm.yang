@@ -15,7 +15,8 @@ module acc-devm {
         prefix inet;
     }
 	
-    revision 2019-02-13 {
+    revision 2021-02-01 {
+        description "M-OTN 1.0";
     }
     /*
     * common types
@@ -225,7 +226,18 @@ module acc-devm {
 	}
     }
 
-    
+    typedef link-direction {
+        type enumeration {
+            enum uplink {
+                value 0;
+		description "上联";
+            }
+            enum downlink {
+                value 1;
+		description "下联";
+            }
+        }
+    }
 		
     /*
     * groupings
@@ -534,8 +546,13 @@ module acc-devm {
                 description "Name of ptp";
             }
 	    leaf eq {
+	        mandatory true;
 	    	type string;
 		description "parent EQ";
+	    }
+	    leaf direction {
+	       type link-direction;
+	       description "暂时定义上下联的方向，便于后续串接时辨识端口位置，对于CPE来讲，线路侧为上联，客户侧为下联方向；对于插板，与CPE相连的方向为下联，与大网连接的方向为上联";
 	    }
             container state-pac {
                 uses state-pac;
