@@ -159,15 +159,15 @@ module acc-devm {
             }
             enum po-pnp {
                 value 3;
-		description 分组增强型PNP，后续过渡到mo-pnp";
+		description "分组增强型PNP，后续过渡到mo-pnp";
             }
 	    enum mo-box {
                 value 4;
-		description 固定盒式M-OTN设备";
+		description "固定盒式M-OTN设备";
             }
 	    enum mo-pnp {
                 value 5;
-		description 插板式M-OTN设备";
+		description "插板式M-OTN设备";
             }
         }
     }
