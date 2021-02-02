@@ -315,11 +315,16 @@ module acc-devm {
             config false;
         }
         leaf server-tp {
-            mandatory true;
             type string{
             length "1..64";
             }
-            description "parent PTP name";
+            description "parent PTP name,更新为一个ctp可以没有serverTp，例如eos场景下eth-ftp关联的那个vc ctp";
+        }
+	leaf client-tp {
+            type string{
+            length "1..64";
+            }
+            description "例如eos场景下eth-ftp绑定的那个vc ctp，其client-tp为关联的那个eth-ftp";
         }
         leaf loop-back {
             mandatory true;
