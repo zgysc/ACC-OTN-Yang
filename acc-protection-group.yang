@@ -41,6 +41,29 @@ module acc-protection-group {
             }
         }
     }
+    
+    typedef protection-type-eq-pg{
+        type enumeration{
+	    enum control-1-plus-1{
+	        value 0;
+	        description "control-1-plus-1";
+	    }
+	    enum cross-connect-1-plus-1{
+	        value 1;
+                description "cross connect 1-plus-1";
+            }
+            enum control-cross-connect-1-plus-1{
+                value 2;
+                description "control cross connect-1-plus-1";
+	    }
+            enum power-1-plus-1{
+                value 3;
+                description "power-1-plus-1";
+	    }
+	}
+    }
+    
+    
     typedef switch-type {
         type enumeration {
             enum uni-switch {
@@ -93,40 +116,44 @@ module acc-protection-group {
             }
         }
     }
-    typedef switch-reason {
+   typedef switch-reason {
         type enumeration {
             enum no-switch {
                 value 0;
-                description "no switch";
+                description "no switch,only for pg";
             }
             enum sf-switch {
                 value 1;
-                description "SF switch";
+                description "SF switch,only for pg";
             }
             enum sd-switch {
                 value 2;
-                description "SD switch";
+                description "SD switch,only for pg";
             }
             enum manual-switch {
                 value 3;
-                description "manual switch";
+                description "manual switch,for pg and eq-pg";
             }
             enum force-switch {
                 value 4;
-                description "force switch";
+                description "force switch,only for pg";
             }
             enum cleared {
                 value 5;
-                description "cleared";
+                description "cleared,only for pg";
             }
             enum wait-for-restore {
                 value 6;
-                description "WTR";
+                description "WTR,only for pg";
             }
             enum lockout {
                 value 7;
-                description "lockout of protection";
+                description "lockout of protection,only for pg";
             }
+	    enum cleared-sf-switch{
+	        value 8;
+		description "clearedsf-switch,only for eq-pg";
+	    }
         }
     }
 
@@ -204,7 +231,40 @@ module acc-protection-group {
         }
     }
 
-
+ grouping eq-pg{
+	description
+	"eq-pg";
+	leaf pg-id{
+	    mandatory true;
+	    type uint16;
+        }
+	leaf protection-type{
+	    mandatory true;
+	    type protection-type-eq-pg;
+	}
+	leaf switch-reason{
+	    type switch-reason;
+	}
+	leaf protection-direction{
+	    mandatory true;
+	    type protection-direction;
+	}
+	leaf primary-eq{
+	    mandatory true;
+	    config false;
+	    type string;
+	}
+	leaf secondary-eq{
+	    mandatory true;
+            config false;
+            type string;
+	}
+        leaf selected-eq{
+            mandatory true;
+            config false;
+            type string;
+	}
+    }
     /*
     * the data tree
     */
@@ -222,12 +282,20 @@ module acc-protection-group {
             mandatory true;
             type uint64;
         }
-        container pg {
-            uses pg;
-        }
+		choice pg-or-eq-pg {
+	        case pg {
+			    container pgs {
+				    uses pg;
+				}
+			}
+			case eq-pg {
+			    container eq-pgs {
+				    uses eq-pg;
+				}
+			}
+		}
         description "protection switch notification";
     }
-
     /*
     * operations
     */
@@ -251,6 +319,30 @@ module acc-protection-group {
                 mandatory true;
                 type protection-direction;
                 description "protection direction";
+            }
+        }
+    }
+    
+    rpc perform-eq-protection-command {
+        description
+            "eq-protection";
+        input {
+            leaf pg-id {
+                mandatory true;
+                type uint64;
+                description  "eqpg-id";
+            }
+
+            leaf protection-command {
+                mandatory true;
+                type switch-reason;
+                description "eq protection command";
+            }
+
+            leaf protection-direction {
+                mandatory true;
+                type protection-direction;
+                description "eq protection direction";
             }
         }
     }
