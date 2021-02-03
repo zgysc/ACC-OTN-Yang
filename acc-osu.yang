@@ -191,10 +191,18 @@ module acc-osu {
 
             container primary-nni {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "primary nni,必选";
             }
             container secondary-nni {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "业务带保护模式，可选";
             }
               
@@ -215,6 +223,55 @@ module acc-osu {
                     }
                 }
             }
+	    container ports-with-role {
+	    leaf eth-ptp-ctp {
+			    type string;
+                mandatory true;
+				description "客户侧 PTP的CTP";
+			}
+			leaf eth-ftp-ctp {
+			    type string;
+                mandatory true;
+				description "ETH FTP的clientCtp";
+			}
+			leaf eth-ftp {
+			    type string;
+                mandatory true;
+				description "ETH FTP";
+			}
+		    leaf eth-ftp-osu-ctp {
+			    type string;
+                mandatory true;
+				description "ETH FTP绑定的serverCtp";
+			}
+		    leaf osu-ftp {
+			type string;
+			mandatory true;
+			description "OSU FTP(主)";
+		    }
+			leaf osu-ftp-ctp {
+			    type string;
+		mandatory true;
+				description "OSU FTP(主)的clientCtp";
+			}
+		    leaf osu-ftp-p {
+			type string;
+			description "OSU FTP(备)(only SNCP）";
+		    }
+		    leaf osu-ftp-ctp-p {
+			    type string;
+				description "OSU FTP(备)的clientCtp（only SNCP）";
+			}
+	    	leaf ul-odu-ctp {
+		   	 type string;
+		 	mandatory true;
+			description "上联 ODU CTP(主)";
+		}
+		leaf ul-odu-ctp-p {
+		    type string;
+			description "上联 ODU CTP(备)(SNCP or ODU)";
+		}
+	    }
         }
     }
 
@@ -248,18 +305,34 @@ module acc-osu {
 
             container primary-nni {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "primary nni,必选";
             }
             container secondary-nni {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "带保护模式，可选";
             }
             container primary-nni2 {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "NNI-NNI不带保护，可选";
             }
             container secondary-nni2 {
                 uses acc-otn:nni;
+		leaf tpn {
+            		type uint64;
+            		description "value Range: 1~1000";
+        	}
                 description "NNI-NNI带保护，可选";
             }
         }
@@ -279,23 +352,8 @@ module acc-osu {
                     }
                 }                
             }
-        }
-    }
-	
-	rpc get-osu-service-tp {
-	    input {
-		    leaf name {
-                mandatory true;
-                type string;
-                description "connection name";
-            }
-            leaf service-id {
-                type string;
-                description "管控下发的connection的label";
-            }
-		}
-	    output {
-                    leaf osu-ptp-ctp {
+	    container ports-with-role {
+	    	leaf osu-ptp-ctp {
                         type string;
                         description "客户侧 PTP的子CTP(only UNI-NNI)";
                     }
@@ -352,71 +410,10 @@ module acc-osu {
                         type string;
                         description "上联ODU CTP(备)(有保护时必须报）";
                     }
-		}
-	}
-	
-	rpc get-eo-osu-service-tp {
-	    input {
-		    leaf name {
-                mandatory true;
-                type string;
-                description "connection name";
-            }
-            leaf service-id {
-                type string;
-                description "管控下发的connection的label";
-            }
+	    }
         }
-		output {
-		    leaf eth-ptp-ctp {
-			    type string;
-                mandatory true;
-				description "客户侧 PTP的CTP";
-			}
-			leaf eth-ftp-ctp {
-			    type string;
-                mandatory true;
-				description "ETH FTP的clientCtp";
-			}
-			leaf eth-ftp {
-			    type string;
-                mandatory true;
-				description "ETH FTP";
-			}
-		    leaf eth-ftp-osu-ctp {
-			    type string;
-                mandatory true;
-				description "ETH FTP绑定的serverCtp";
-			}
-            leaf osu-ftp {
-                type string;
-                mandatory true;
-                description "OSU FTP(主)";
-            }
-			leaf osu-ftp-ctp {
-			    type string;
-                mandatory true;
-				description "OSU FTP(主)的clientCtp";
-			}
-            leaf osu-ftp-p {
-                type string;
-                description "OSU FTP(备)(only SNCP）";
-            }
-		    leaf osu-ftp-ctp-p {
-			    type string;
-				description "OSU FTP(备)的clientCtp（only SNCP）";
-			}
-		    leaf ul-odu-ctp {
-			    type string;
-                mandatory true;
-				description "上联 ODU CTP(主)";
-			}
-			leaf ul-odu-ctp-p {
-			    type string;
-				description "上联 ODU CTP(备)(SNCP or ODU)";
-			}	
-		}
-	}
+    }
+	
 	
     rpc modify-osu-connection-capacity {
         input {
