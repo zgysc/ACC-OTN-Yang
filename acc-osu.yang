@@ -26,9 +26,6 @@ module acc-osu {
         prefix acc-pg;
     }
 
-    revision 2020-12-02 {
-        description "init v1.0";
-    }
     revision 2021-01-31 {
         description "for M-OTN 1.0";
     }
@@ -55,13 +52,30 @@ module acc-osu {
         }
     }
 
+    typedef fail-reason {
+        type enumeration {
+            enum service-fail{
+                value 0;
+                description "业务失败";
+            }
+            enum no-resource {
+                value 1;
+                description "资源不足";
+            }
+            enum timeout{
+                value 2;
+                description "定时器超时";
+            }
+        }
+    }
+
     /*
    * groupings
    */
     
 
     augment "/acc-devm:ptps/acc-devm:ptp" {
-        when "acc-devm:layer-protocol-name = 'OSU'";
+        when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
         container osu-ptp-pac {
 		leaf-list osu-signal-type {
 			config false;
@@ -76,7 +90,7 @@ module acc-osu {
     }
 
     augment "/acc-devm:ftps/acc-devm:ftp" {
-        when "acc-devm:layer-protocol-name = 'OSU'";
+        when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
         container osu-ftp-pac {
             leaf available-tpn-number {
                     mandatory true;
@@ -97,7 +111,7 @@ module acc-osu {
     }
 
     augment "/acc-devm:ctps/acc-devm:ctp" {
-        when "acc-devm:layer-protocol-name = 'OSU'";
+        when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
         container osu-ctp-pac {
             leaf osu-signal-type {
                 type acc-enum:signal-type;
@@ -431,6 +445,32 @@ module acc-osu {
 	    	mandatory true;
                 type acc-otn:modify-action;
             }
+        }
+    }
+
+    notification osu-adjustment-notification {
+        leaf osu-adjust-serial-no {
+            mandatory true;
+            type uint64;
+            
+        }
+        leaf ctp-name {
+            mandatory true;
+            type string {
+                length "1..64";
+            }
+        }
+        leaf modify-result {
+            mandatory true;
+            type string;
+            description "success , failure";
+        }
+        leaf fail-reason {
+            type fail-reason;
+            description "if only failure";
+        }
+        container requested-capacity {
+            uses acc-con:capacity;
         }
     }
 }

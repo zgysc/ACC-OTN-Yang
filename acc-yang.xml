@@ -240,20 +240,6 @@
     <total-slot-number>
       <!-- type: uint16 -->
     </total-slot-number>
-    <xc-capabilities>
-      <xc-capability>
-        <!-- # keys: seq-->
-        <!-- # entries: 0.. -->
-        <seq>
-          <!-- type: uint16 -->
-        </seq>
-        <eth></eth>
-        <odu></odu>
-        <vc></vc>
-        <osu></osu>
-        <eo-osu></eo-osu>
-      </xc-capability>
-    </xc-capabilities>
   </me>
   <ptps xmlns="urn:ccsa:yang:acc-devm">
     <ptp>
@@ -265,6 +251,9 @@
       <eq>
         <!-- type: string -->
       </eq>
+      <direction>
+        <!-- type: link-direction -->
+      </direction>
       <state-pac>
         <operational-state>
           <!-- type: operational-state -->
@@ -543,6 +532,9 @@
       <server-tp>
         <!-- type: string -->
       </server-tp>
+      <client-tp>
+        <!-- type: string -->
+      </client-tp>
       <loop-back>
         <!-- type: loopback-type -->
       </loop-back>
@@ -741,9 +733,9 @@
       <plug-state>
         <!-- type: boolean -->
       </plug-state>
-      <xc-capability>
-        <!-- type: boolean -->
-      </xc-capability>
+      <xc-property>
+        <!-- type: string -->
+      </xc-property>
       <eq-type>
         <!-- # entries: 1.. -->
       </eq-type>
@@ -756,6 +748,15 @@
       <ptp>
         <!-- # entries: 0.. -->
       </ptp>
+      <ftp>
+        <!-- # entries: 0.. -->
+      </ftp>
+      <xc-capability>
+        <eth></eth>
+        <odu></odu>
+        <vc></vc>
+        <osu></osu>
+      </xc-capability>
     </eq>
   </eqs>
   <performances xmlns="urn:ccsa:yang:acc-performance">

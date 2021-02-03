@@ -26,9 +26,6 @@ module acc-otn {
 
     description "xxx";
 
-    revision 2019-02-13 {
-        description "Initial revision.";
-    }
     revision 2021-01-31 {
         description "for M-OTN 1.0";
     }
@@ -204,7 +201,7 @@ module acc-otn {
     * the data tree
     */
     augment "/acc-devm:ptps/acc-devm:ptp" {
-        when "acc-devm:layer-protocol-name = acc-type:ODU";
+        when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
         container odu-ptp-pac {
             leaf odu-capacity {
                 mandatory true;
@@ -276,7 +273,7 @@ module acc-otn {
     }
 
     augment "/acc-devm:ctps/acc-devm:ctp" {
-        when "acc-devm:layer-protocol-name = acc-type:ODU";
+        when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
         container odu-ctp-pac {
             leaf odu-signal-type {
                 mandatory true;
@@ -369,7 +366,26 @@ module acc-otn {
         output {
             container connection {
                 uses acc-con:connection;
-            }           
+            } 
+            container ports-with-role{
+                leaf ul-odu-ctp {
+                mandatory true;
+                type string;
+                description "上联 主用 ODU CTP";
+              }
+              leaf ul-odu-ctp-p {
+                type string;
+                description "上联 保护口的 ODU CTP（有保护才上报）";
+              }
+              leaf dl-odu-ctp {
+                type string;
+                description "下联 主用 ODU CTP（only NNI-NNI）";
+              }
+              leaf dl-odu-ctp-p {
+                type string;
+                description "下联 保护口的 ODU CTP（only NNI-NNI，有保护才上报）";
+              } 
+            }          
         }
     }
 
@@ -408,39 +424,6 @@ module acc-otn {
         }
     }
 
-    rpc get-odu-service-tp {
-        input {
-            leaf name {
-                mandatory true;
-                type string;
-                description "connection name";
-            }
-            leaf service-id {
-                type string;
-                description "管控下发的connection的label";
-            }
-
-        }
-        output {
-            
-          leaf ul-odu-ctp {
-            mandatory true;
-            type string;
-            description "上联 主用 ODU CTP";
-          }
-          leaf ul-odu-ctp-p {
-            type string;
-            description "上联 保护口的 ODU CTP（有保护才上报）";
-          }
-          leaf dl-odu-ctp {
-            type string;
-            description "下联 主用 ODU CTP（only NNI-NNI）";
-          }
-          leaf dl-odu-ctp-p {
-            type string;
-            description "下联 保护口的 ODU CTP（only NNI-NNI，有保护才上报）";
-          }                    
-        }
-    }
+    
     
 }

@@ -261,10 +261,11 @@ module acc-devm {
             length "1..64";
             }
         }
-	leaf eq {
-	    type string;
-	    description "parent EQ, Does each FTP has parent EQ?????";
-	}
+    	leaf eq {
+    	    type string;
+            mandatory true;
+    	    description "parent EQ";
+    	}
         container state-pac {
             uses state-pac;
         }
@@ -499,45 +500,12 @@ module acc-devm {
             min-elements 1;
             config false;
         }
-	leaf total-slot-number {
-	    mandatory true;
-	    type uint16;
-	    description "设备所有槽位的数量，用于面板图绘制";
-	}
-	container xc-capabilities {
-	  list xc-capability {
-	     key 'seq';
-	     leaf seq {
-	       type uint16;
-	       description "表示第几个槽位";
-	     }
-	     leaf eth {
-	      	type string;
-		default "";
-		description "针对ETH业务，可与slot-seq交叉的所有槽位，多个之间以英文逗号相隔,连续槽位用 '-' 相隔，如： 1-3,5,7 ";
-	     }
-	     leaf odu {
-	       type string;
-	       default "";
-	       description "for ODU";
-	     }
-	     leaf vc {
-	       type string;
-	       default "";
-	       description "for VC";
-	     }
-	     leaf osu {
-	     	type string;
-		default "";
-		description "for OSU";
-	     }
-	     leaf eo-osu {
-	     	type string;
-		default "";
-		description "for EoOSU";
-	     }
-	  }
-	}
+    	leaf total-slot-number {
+    	    mandatory true;
+    	    type uint16;
+    	    description "设备所有槽位的数量，用于面板图绘制";
+    	}
+	
     }
 
     container ptps {
@@ -692,10 +660,10 @@ module acc-devm {
                 type boolean;
                 config false;
             }
-	    leaf xc-capability {
-	    	type boolean;
-		config false;
-		description "是否支持异板之间的交叉";
+	    leaf xc-property {
+	    	type string;
+		      config false;
+		    description "是否支持异板之间的交叉： FULL（支持全交叉） PARTIAL(部分交叉) NONE(非业务板都为NONE)";
 	    }
     	    leaf-list eq-type {
     		      config false;
@@ -721,6 +689,36 @@ module acc-devm {
                 }
                 config false;
                 description "仅保留此字段，后续不使用此值，因在ptp中已标识父EQ";
+            }
+            leaf-list ftp {
+                min-elements 0;
+                type leafref {
+                    path '/acc-devm:ftps/acc-devm:ftp/acc-devm:name';
+                }
+                config false;
+                description "仅保留此字段，后续不使用此值，因在ftp中已标识父EQ";
+            }
+            container xc-capability {
+             leaf eth {
+                type string;
+                default "";
+                description "针对ETH业务，可与交叉的所有槽位，以英文逗号相隔";
+             }
+             leaf odu {
+               type string;
+               default "";
+               description "for ODU";
+             }
+             leaf vc {
+               type string;
+               default "";
+               description "for VC";
+             }
+             leaf osu {
+                type string;
+                default "";
+                description "for OSU";
+             } 
             }
         }
     }

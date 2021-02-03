@@ -13,11 +13,8 @@ module acc-performance {
     organization "xxx";
     contact "xxx";
     description "This module defines an interface for managing performances.";
-    revision 2019-02-13 {
-        description "Initial revision.";
-        reference "RFC xxx";
-    }
-    revision 2021-01-31 {
+    
+	revision 2021-01-31 {
         description "for M-OTN 1.0";
     }
     /*

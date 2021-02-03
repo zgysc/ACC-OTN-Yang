@@ -118,7 +118,7 @@ module acc-sdh {
     }
     
     augment "/acc-devm:ptps/acc-devm:ptp" {
-        when "acc-devm:layer-protocol-name = acc-type:SDH";
+        when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
         container sdh-ptp-pac {
             leaf current-sdh-signal-type {
                 mandatory true;
@@ -155,7 +155,7 @@ module acc-sdh {
     }
 
     augment "/acc-devm:ftps/acc-devm:ftp" {
-        when "acc-devm:layer-protocol-name = acc-type:SDH";
+        when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
         container sdh-ftp-pac {
             leaf sdh-signal-type {
                 mandatory true;
@@ -189,7 +189,7 @@ module acc-sdh {
     }
 
     augment "/acc-devm:ctps/acc-devm:ctp" {
-        when "acc-devm:layer-protocol-name = acc-type:SDH";
+        when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
         container vc-ctp-pac {
             leaf vc-type {
                 mandatory true;
@@ -320,87 +320,74 @@ module acc-sdh {
                     }
                 }                
             }
+            container ports-with-role{
+                leaf sdh-ptp-ctp {
+                type string;
+                description "客户侧 PTP 的子 CTP(for UNI-NNI)";
+              }
+
+              leaf ul-sdh-ftp {
+                mandatory true;
+                type string;
+                description "SDH FTP(主)";
+              }
+
+              leaf ul-sdh-ftp-ctp {
+                mandatory true;
+                type string;
+                description "SDH FTP(主)的SDH CTP";
+              }
+
+              leaf ul-sdh-ftp-p {
+                type string;
+                description "SDH FTP(备) 有保护才上报";
+              }
+
+              leaf ul-sdh-ftp-ctp-p {
+                type string;
+                description "SDH FTP(备)的SDH CTP(有保护才上报)";
+              }
+
+              leaf dl-sdh-ftp {
+                type string;
+                description "下联 SDH FTP(主) (for NNI-NNI)";
+              }
+
+              leaf dl-sdh-ftp-ctp {
+                type string;
+                description "下联 SDH FTP(主)的SDH CTP (for NNI-NNI)";
+              }
+
+              leaf dl-sdh-ftp-p {
+                type string;
+                description "下联 SDH FTP(备)(for NNI-NNI有保护才上报)";
+              }
+
+              leaf dl-sdh-ftp-ctp-p {
+                type string;
+                description "下联 SDH FTP(备)的SDH CTP(for NNI-NNI有保护才上报)";
+              }
+
+              leaf ul-odu-ctp {
+                mandatory true;
+                type string;
+                description "上联 ODU CTP(主)";
+              }
+              leaf ul-odu-ctp-p {
+                type string;
+                description "上联 ODU CTP(备)（有保护则上报）";
+              }
+              leaf dl-odu-ctp {
+                type string;
+                description "下联 ODU CTP(主)（only NNI-NNI）";
+              }
+              leaf dl-odu-ctp-p {
+                type string;
+                description "下联 ODU CTP(备)（only NNI-NNI有保护才上报）";
+              }
+            }
         }
     }
     
-    rpc get-sdh-service-tp {
-        input {
-            leaf name {
-                mandatory true;
-                type string;
-                description "connection name";
-            }
-            leaf service-id {
-                type string;
-                description "管控下发的connection的label";
-            }
-
-        }
-        output {
-           leaf sdh-ptp-ctp {
-            type string;
-            description "客户侧 PTP 的子 CTP(for UNI-NNI)";
-          }
-
-          leaf ul-sdh-ftp {
-            mandatory true;
-            type string;
-            description "SDH FTP(主)";
-          }
-
-          leaf ul-sdh-ftp-ctp {
-            mandatory true;
-            type string;
-            description "SDH FTP(主)的SDH CTP";
-          }
-
-          leaf ul-sdh-ftp-p {
-            type string;
-            description "SDH FTP(备) 有保护才上报";
-          }
-
-          leaf ul-sdh-ftp-ctp-p {
-            type string;
-            description "SDH FTP(备)的SDH CTP(有保护才上报)";
-          }
-
-          leaf dl-sdh-ftp {
-            type string;
-            description "下联 SDH FTP(主) (for NNI-NNI)";
-          }
-
-          leaf dl-sdh-ftp-ctp {
-            type string;
-            description "下联 SDH FTP(主)的SDH CTP (for NNI-NNI)";
-          }
-
-          leaf dl-sdh-ftp-p {
-            type string;
-            description "下联 SDH FTP(备)(for NNI-NNI有保护才上报)";
-          }
-
-          leaf dl-sdh-ftp-ctp-p {
-            type string;
-            description "下联 SDH FTP(备)的SDH CTP(for NNI-NNI有保护才上报)";
-          }
-
-          leaf ul-odu-ctp {
-            mandatory true;
-            type string;
-            description "上联 ODU CTP(主)";
-          }
-          leaf ul-odu-ctp-p {
-            type string;
-            description "上联 ODU CTP(备)（有保护则上报）";
-          }
-          leaf dl-odu-ctp {
-            type string;
-            description "下联 ODU CTP(主)（only NNI-NNI）";
-          }
-          leaf dl-odu-ctp-p {
-            type string;
-            description "下联 ODU CTP(备)（only NNI-NNI有保护才上报）";
-          }                    
-        }
-    }
+    
 }
