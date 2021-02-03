@@ -196,10 +196,7 @@ module acc-otn {
             type acc-enum:odu-switch-type;
             description "Switch capability";
         }
-        leaf tpn {
-            type uint64;
-            description "only for OSU connection , value Range: 1~1000";
-        }
+        
         description "本来nni结构里面的属性都必选，但如果加上mandatory为true，同时放在secondary-nni里又因子属性必选引起父容器也跟着必选，就与secondary-nni可空矛盾了";
     }
 
