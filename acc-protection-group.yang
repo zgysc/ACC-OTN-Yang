@@ -124,7 +124,7 @@ module acc-protection-group {
             }
             enum sf-switch {
                 value 1;
-                description "SF switch,only for pg";
+                description "SF switch,for pg and eq-pg";
             }
             enum sd-switch {
                 value 2;
@@ -140,7 +140,7 @@ module acc-protection-group {
             }
             enum cleared {
                 value 5;
-                description "cleared,only for pg";
+                description "cleared,for pg and eq-pg";
             }
             enum wait-for-restore {
                 value 6;
@@ -150,10 +150,6 @@ module acc-protection-group {
                 value 7;
                 description "lockout of protection,only for pg";
             }
-	    enum cleared-sf-switch{
-	        value 8;
-		description "clearedsf-switch,only for eq-pg";
-	    }
         }
     }
 
