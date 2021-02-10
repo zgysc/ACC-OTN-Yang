@@ -505,6 +505,38 @@ module acc-devm {
     	    type uint16;
     	    description "设备所有槽位的数量，用于面板图绘制";
     	}
+        container xc-capability {
+             description "仅仅针对插板设备，仅描述所有业务板卡插槽的交换能力";
+             leaf full-cross{
+                type boolean;
+                default true;
+                description "是否支持全交叉，如果不支持，才需描述下面交叉信息";
+             }
+             leaf nniUniSpecial{
+                type boolean;
+                default false;
+                description "相同的业务场景，uni-nni与 nni-nni模式的交叉能力可能不同，如果有差别，要用 || 间隔，如：NNI的交叉信息||UNI的交叉信息";
+             }
+             leaf eth {
+                type string;
+                description "针对ETH业务，具体规则详见企标，由一组或多组括号包围的规则表示，每组括号之间以 ; 间隔";
+             }
+             leaf odu {
+               type string;
+               default "";
+               description "for ODU，如（1，2，3）括号内的槽道可双向任意两两交叉";
+             }
+             leaf vc {
+               type string;
+               default "";
+               description "for VC，如([1,2]~[4-7,8,11]) 表示单向，表示只能从1或2任意一个槽道，交叉到4,5,6,7,8,11";
+             }
+             leaf osu {
+                type string;
+                default "";
+                description "for OSU";
+             } 
+            }
 	
     }
 
@@ -660,11 +692,6 @@ module acc-devm {
                 type boolean;
                 config false;
             }
-	    leaf xc-property {
-	    	type string;
-		      config false;
-		    description "是否支持异板之间的交叉： FULL（支持全交叉） PARTIAL(部分交叉) NONE(非业务板都为NONE)";
-	    }
     	    leaf-list eq-type {
     		      config false;
     		      type eq-type;
@@ -698,28 +725,7 @@ module acc-devm {
                 config false;
                 description "仅保留此字段，后续不使用此值，因在ftp中已标识父EQ";
             }
-            container xc-capability {
-             leaf eth {
-                type string;
-                default "";
-                description "针对ETH业务，可与交叉的所有槽位，以英文逗号相隔";
-             }
-             leaf odu {
-               type string;
-               default "";
-               description "for ODU";
-             }
-             leaf vc {
-               type string;
-               default "";
-               description "for VC";
-             }
-             leaf osu {
-                type string;
-                default "";
-                description "for OSU";
-             } 
-            }
+            
         }
     }
 
