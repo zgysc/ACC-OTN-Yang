@@ -145,6 +145,13 @@ module: acc-devm
   |  +--ro eq*                    -> /eqs/eq/name
   |  +--ro mc-port*               -> /mc-ports/mc-port/name
   |  +--rw total-slot-number      uint16
+  |  +--rw xc-capability
+  |     +--rw full-cross?      boolean
+  |     +--rw nniUniSpecial?   boolean
+  |     +--rw eth?             string
+  |     +--rw odu?             string
+  |     +--rw vc?              string
+  |     +--rw osu?             string
   +--rw ptps
   |  +--rw ptp* [name]
   |     +--rw name                             string
@@ -324,17 +331,11 @@ module: acc-devm
         +--rw name                string
         +--rw model?              string
         +--ro plug-state          boolean
-        +--ro xc-property?        string
         +--ro eq-type*            eq-type
         +--ro software-version?   string
         +--ro hardware-version?   string
         +--ro ptp*                -> /ptps/ptp/name
         +--ro ftp*                -> /ftps/ftp/name
-        +--rw xc-capability
-           +--rw eth?   string
-           +--rw odu?   string
-           +--rw vc?    string
-           +--rw osu?   string
 
   rpcs:
     +---x reset

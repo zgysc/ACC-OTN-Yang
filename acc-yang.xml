@@ -240,6 +240,16 @@
     <total-slot-number>
       <!-- type: uint16 -->
     </total-slot-number>
+    <xc-capability>
+      <full-cross>True</full-cross>
+      <nniUniSpecial>False</nniUniSpecial>
+      <eth>
+        <!-- type: string -->
+      </eth>
+      <odu></odu>
+      <vc></vc>
+      <osu></osu>
+    </xc-capability>
   </me>
   <ptps xmlns="urn:ccsa:yang:acc-devm">
     <ptp>
@@ -733,9 +743,6 @@
       <plug-state>
         <!-- type: boolean -->
       </plug-state>
-      <xc-property>
-        <!-- type: string -->
-      </xc-property>
       <eq-type>
         <!-- # entries: 1.. -->
       </eq-type>
@@ -751,12 +758,6 @@
       <ftp>
         <!-- # entries: 0.. -->
       </ftp>
-      <xc-capability>
-        <eth></eth>
-        <odu></odu>
-        <vc></vc>
-        <osu></osu>
-      </xc-capability>
     </eq>
   </eqs>
   <performances xmlns="urn:ccsa:yang:acc-performance">
