@@ -332,6 +332,8 @@ module: acc-devm
         +--rw model?              string
         +--ro plug-state          boolean
         +--ro eq-type*            eq-type
+        +--ro xc-capability       boolean
+        +--ro working-state       working-state
         +--ro software-version?   string
         +--ro hardware-version?   string
         +--ro ptp*                -> /ptps/ptp/name
