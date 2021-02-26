@@ -27,16 +27,12 @@ module acc-yang-types {
     }
     typedef granularity {
         type enumeration {
-            enum 1min {
-                value 0;
-                description "1min granularity";
-            }
             enum 15min {
-                value 1;
+                value 0;
                 description "15min granularity";
             }
             enum 24h {
-                value 2;
+                value 1;
                 description "24h granularity";
             }
 
