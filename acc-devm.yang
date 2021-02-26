@@ -226,6 +226,17 @@ module acc-devm {
 	}
     }
 
+    typedef working-state {
+        type enumeration {
+            enum normal {
+                value 0;
+            }
+            enum backup {
+                value 1;
+            }
+        }
+    }
+    
     typedef link-direction {
         type enumeration {
             enum uplink {
@@ -652,9 +663,10 @@ module acc-devm {
                 length "1..64";
                 }
             }
-			leaf model {
-				type string;
-			}
+	    leaf model {
+		type string;
+		description "必须与集采时上报的型号一致，区分大小写";
+	    }
             leaf plug-state {
                 mandatory true;
                 type boolean;
@@ -665,6 +677,13 @@ module acc-devm {
     		      type eq-type;
                   min-elements 1;
     	    }
+	    leaf xc-capability {
+	        default true;
+	        type boolean;
+	    }
+	    leaf working-state {
+	       type working-state;
+	    }
             leaf software-version {
                 type string{
                     length "1..32";
